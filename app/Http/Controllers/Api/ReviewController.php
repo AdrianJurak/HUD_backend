@@ -47,4 +47,16 @@ class ReviewController extends Controller
             'review' => $review
         ],201);
     }
+
+    public function destroy(Request $request,$id){
+        $review = Review::findOrFail($id);
+
+        if($request->user()->id !== $review->user_id){
+            return response()->json(['unauthorized'], 403);
+        }
+
+        $review->delete();
+
+        return response()->json(['Review removed'],200);
+    }
 }

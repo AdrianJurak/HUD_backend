@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerificationCodeMail;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -17,18 +19,22 @@ class AuthController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
+        $token = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
+            'verification_token' => $token,
+            'verification_token_expires_at' => now()->addMinutes(10),
         ]);
 
-        $token = $user->createToken('android-app')->plainTextToken;
+        Mail::to($user->email)->send(new VerificationCodeMail($token));
 
         return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ],201);
+            'messege' => 'User created successfully. Please check your email for the verification code.',
+            'email' => $user->email,
+        ], 201);
     }
 
     public function login(Request $request)
@@ -40,7 +46,11 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if ($user->email_verified_at == null) {
+            return response()->json(['message' => 'Email is not verified.'], 400);
+        }
+
+        if (!$user || !Hash::check($validatedData['password'], $user->password)) {
             return response()->json(['error' => 'Your credentials are incorrect'], 401);
         }
 
@@ -52,7 +62,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([

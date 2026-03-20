@@ -6,31 +6,64 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\ThemeController;
 use App\Http\Controllers\Api\DownloadController;
+use App\Http\Controllers\Api\ThemeFavoriteController;
+use App\Http\Controllers\Api\EmailVerificationController;
+use App\Http\Controllers\Api\PasswordResetController;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+Route::prefix('v1')->group(function () {
+    Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
 
-Route::post('/v1/register', [AuthController::class, 'register']);
-Route::post('/v1/login', [AuthController::class, 'login']);
+    Route::post('verify', [EmailVerificationController::class, 'verifyEmail'])->middleware('throttle:5,1');
+    Route::post('token-refresh', [EmailVerificationController::class, 'tokenRefresh'])->middleware('throttle:5,1');
 
-Route::get('/v1/themes', [ThemeController::class, 'index']);
-Route::get('/v1/themes/{hash_id}', [ThemeController::class, 'show']);
+    Route::post('generate-password-token', [PasswordResetController::class, 'passwordRecoveryToken'])->middleware('throttle:5,1');
+    Route::post('password-change', [PasswordResetController::class, 'passwordChange'])->middleware('throttle:5,1');
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/v1/logout', [AuthController::class, 'logout']);
+    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
-    Route::get('/v1/user', function (Request $request) {
-        return $request->user();
+    Route::get('themes', [ThemeController::class, 'index']);
+    Route::get('themes/{hash_id}', [ThemeController::class, 'show']);
+
+    Route::get('categories', function () {
+        $categories = Category::all(['id', 'name']);
+
+        return response()->json($categories, 200);
     });
-    Route::post('/v1/profile', [ProfileController::class, 'update']);
 
-    Route::get('/v1/themes/{hash_id}/reviews', [ReviewController::class, 'index']);
-    Route::post('/v1/themes/{hash_id}/reviews', [ReviewController::class, 'store']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::post('/v1/themes/{hash_id}/downloads', DownloadController::class);
+        Route::get('user', function (Request $request) {
+            $user = $request->user();
 
-    Route::post('/v1/flags', [FlagController::class, 'store']);
+            return response()->json([
+                'id' => $user->hash_id,
+                'name' => $user->name,
+                'email' => $user->email,
 
-    Route::post('/v1/themes', [ThemeController::class, 'store']);
-    Route::put('/v1/themes/{hash_id}', [ThemeController::class, 'update']);
-    Route::delete('/v1/themes/{hash_id}', [ThemeController::class, 'destroy']);
+                'profile_picture_url' => $user->profile_picture_url
+                    ? asset('storage/' . $user->profile_picture_url)
+                    : null,
+            ]);
+        });
+        Route::post('profile', [ProfileController::class, 'update']);
+        Route::delete('profile', [ProfileController::class, 'destroy']);
+
+        Route::get('themes/{hash_id}/reviews', [ReviewController::class, 'index']);
+        Route::post('themes/{hash_id}/reviews', [ReviewController::class, 'store']);
+        Route::delete('themes/{hash_id}/reviews', [ReviewController::class, 'destroy']);
+
+        Route::post('themes/{hash_id}/downloads', DownloadController::class);
+
+        Route::post('flags', [FlagController::class, 'store']);
+
+        Route::post('themes', [ThemeController::class, 'store']);
+        Route::put('themes/{hash_id}', [ThemeController::class, 'update']);
+        Route::delete('themes/{hash_id}', [ThemeController::class, 'destroy']);
+
+        Route::post('themes/{hash_id}/favorite', [ThemeFavoriteController::class, 'toggle']);
+    });
+
 });

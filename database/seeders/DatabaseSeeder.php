@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
+use App\Models\Review;
 use App\Models\User;
 use App\Models\Theme;
 use illuminate\Support\Facades\Hash;
@@ -17,7 +19,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         User::factory(10)->has(Theme::factory()->count(3))->create();
+         User::factory(10)->has(Theme::factory()->count(3)->has(Review::factory()->count(3)))->create();
+
+         Category::factory(10)->create();
 
         User::factory()->create([
             'name' => 'Test User',

@@ -8,11 +8,13 @@ trait HasHashids
 {
     public function getHashIdAttribute()
     {
-        return Hashids::encode($this->id);
+        return Hashids::connection($this->getTable())->encode($this->id);
     }
     public static function decodeId($hash)
     {
-        $decoded = Hashids::decode($hash);
+        $tableName = (new static)->getTable();
+
+        $decoded = Hashids::connection($tableName)->decode($hash);
         return $decoded[0] ?? null;
     }
 }

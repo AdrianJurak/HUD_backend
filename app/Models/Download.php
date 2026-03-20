@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Download extends Model
 {
@@ -13,11 +14,13 @@ class Download extends Model
         'theme_id',
     ];
 
-    public function user(){
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function theme(){
+    public function theme(): BelongsTo
+    {
         return $this->belongsTo(Theme::class);
     }
 

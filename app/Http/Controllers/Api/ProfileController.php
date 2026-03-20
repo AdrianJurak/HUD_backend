@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,7 +18,7 @@ class ProfileController extends Controller
             'profile_picture_url' => 'sometimes|image|mimes:jpeg,jpg,png,webp|max:4096',
         ]);
 
-        if ($request->hasFile('name')) {
+        if($request->name){
             $user->name = $request->name;
         }
 
@@ -33,10 +34,24 @@ class ProfileController extends Controller
 
         $user->save();
 
+        $hashedUser = new UserResource($user);
+
         return response()->json([
             'success' => 'success',
             'message' => 'Profile updated successfully.',
-            'user' => $user,
+            'user' => $hashedUser,
         ]);
+    }
+
+    public function destroy(Request $request){
+        $user = $request->user();
+
+        if(!empty($user->profile_picture_url)){
+            Storage::disk('public')->delete($user->profile_picture_url);
+        }
+
+        $user->delete();
+
+        return response()->json(['User removed'], 200);
     }
 }

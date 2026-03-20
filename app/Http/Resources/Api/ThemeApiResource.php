@@ -14,7 +14,7 @@ class ThemeApiResource extends JsonResource
      */
     public function toArray($request)
     {
-        $firstImage = !empty($this->image) ? $this->image[0] : null;
+        $firstImage = !empty($this->images) ? $this->images[0] : null;
         return [
             'id' => $this->hash_id,
             'title' => $this->title,
@@ -29,6 +29,10 @@ class ThemeApiResource extends JsonResource
                 'profile_picture_url' => $this->user->profile_picture_url
                     ? asset('storage/'.$this->user->profile_picture_url)
                     : null,
+            ],
+
+            'categories' => [
+                'name' => $this->categories->pluck('name'),
             ]
         ];
     }
