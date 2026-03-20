@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Theme;
 use App\Models\Flag;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Review extends Model
 {
@@ -20,15 +22,15 @@ class Review extends Model
         'comment'
     ];
 
-    public function user(){
+    public function user(): BelongsTo{
         return $this->belongsTo(User::class);
     }
 
-    public function theme(){
+    public function theme(): BelongsTo{
         return $this->belongsTo(Theme::class);
     }
 
-    public function flags(){
+    public function flags(): HasMany{
         return $this->hasMany(Flag::class);
     }
 }

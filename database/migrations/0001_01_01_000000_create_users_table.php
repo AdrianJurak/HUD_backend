@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('profile_picture_url')->nullable();
             $table->enum('role', ['user', 'admin'])->default('user');
             $table->boolean('is_banned')->default(false);
+            $table->string('verification_token',6)->nullable();
+            $table->timestamp('verification_token_expires_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

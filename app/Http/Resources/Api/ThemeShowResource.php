@@ -34,6 +34,10 @@ class ThemeShowResource extends JsonResource
                 'profile_picture_url' => $this->user->profile_picture_url
                 ? asset('storage/'.$this->user->profile_picture_url)
                 : null,
+            ],
+
+            'categories' => [
+                'name' => $this->categories->pluck('name'),
             ]
         ];
     }

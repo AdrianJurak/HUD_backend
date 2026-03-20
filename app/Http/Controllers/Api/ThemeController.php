@@ -12,11 +12,25 @@ use Illuminate\Support\Facades\Storage;
 
 class ThemeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $themes = Theme::with('user:id,name,profile_picture_url')
-                            ->withCount(['reviews','downloads'])
-                            ->paginate(15);
+        $query = Theme::with('user:id,name,profile_picture_url', 'categories:id,name')
+                            ->withCount(['reviews','downloads']);
+
+        $query->when($request->search, function ($q, $search) {
+            $q->where('title','like','%'.$search.'%')
+            ->orWhere('description','like','%'.$search.'%');
+        });
+
+        $sort = $request->sort ?? 'recent';
+
+        if($sort == 'downloads'){
+            $query->orderByDesc('downloads_count');
+        }else if($sort == 'reviews'){
+            $query->orderByDesc('reviews_count');
+        }else $query->latest();
+
+        $themes = $query->paginate(15);
 
         return ThemeApiResource::collection($themes);
     }
@@ -24,7 +38,7 @@ class ThemeController extends Controller
     public function show($hash_id){
         $id = Theme::decodeId($hash_id);
 
-        $theme = Theme::with('user:id,name,profile_picture_url')
+        $theme = Theme::with('user:id,name,profile_picture_url','categories:id,name')
             ->withCount(['reviews','downloads'])
             ->findOrFail($id);
         return new ThemeShowResource($theme);
@@ -37,6 +51,7 @@ class ThemeController extends Controller
             'layout_config' => 'required|array',
             'images' => 'nullable|array|max:5',
             'images.*' => 'file|image|mimes:jpeg,png,jpg,gif|max:8192',
+            'categories' => 'array',
         ]);
 
         $imagePaths = [];
@@ -51,6 +66,10 @@ class ThemeController extends Controller
         $validatedData['images'] = $imagePaths;
 
         $theme = $request->user()->themes()->create($validatedData);
+
+        if($request->has('categories')) {
+            $theme->categories()->sync($request->categories);
+        }
 
         return response()->json($theme, 201);
     }
@@ -70,6 +89,7 @@ class ThemeController extends Controller
             'layout_config' => 'sometimes|required|array',
             'images' => 'sometimes|nullable|array',
             'images.*' => 'sometimes|file|image|mimes:jpeg,png,jpg,gif|max:8192',
+            'categories' => 'sometimes|array',
         ]);
 
         $imagePaths = [];
@@ -86,6 +106,10 @@ class ThemeController extends Controller
         }
 
         $theme->update($validatedData);
+
+        if($request->has('categories')) {
+            $theme->categories()->sync($request->categories);
+        }
 
         return response()->json($theme, 201);
     }
@@ -105,6 +129,6 @@ class ThemeController extends Controller
 
         $theme->delete();
 
-        return response()->json(["Theme removed"], 204);
+        return response()->json(["Theme removed"], 200);
     }
 }
