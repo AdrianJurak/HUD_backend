@@ -48,7 +48,7 @@ Route::prefix('v1')->group(function () {
                     : null,
             ]);
         });
-        Route::post('profile', [ProfileController::class, 'update']);
+        Route::put('profile', [ProfileController::class, 'update']);
         Route::delete('profile', [ProfileController::class, 'destroy']);
 
         Route::get('themes/{hash_id}/reviews', [ReviewController::class, 'index']);

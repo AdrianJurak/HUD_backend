@@ -18,7 +18,6 @@ class ThemeFactory extends Factory
             'user_id' => User::factory(),
             'title' => $this->faker->city(),
             'description' => $this->faker->paragraph(3),
-            'likes' => $this->faker->numberBetween(0, 5000),
             'layout_config' => [
                 [
                     'type' => 'speedometer',
