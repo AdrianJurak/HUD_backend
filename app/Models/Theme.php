@@ -21,7 +21,6 @@ class Theme extends Model
         'user_id',
         'title',
         'description',
-        'likes',
         'layout_config',
         'images'
     ];

@@ -46,12 +46,12 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if ($user->email_verified_at == null) {
-            return response()->json(['message' => 'Email is not verified.'], 400);
-        }
-
         if (!$user || !Hash::check($validatedData['password'], $user->password)) {
             return response()->json(['error' => 'Your credentials are incorrect'], 401);
+        }
+
+        if ($user->email_verified_at == null) {
+            return response()->json(['message' => 'Email is not verified.'], 400);
         }
 
         $token = $user->createToken('android-app')->plainTextToken;
@@ -59,15 +59,13 @@ class AuthController extends Controller
         return response()->json([
             'user' => $user,
             'token' => $token,
-        ]);
+        ],200);
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'message' => 'Logged out'
-        ]);
+        return response()->json(204);
     }
 }

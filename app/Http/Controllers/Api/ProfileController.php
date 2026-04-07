@@ -11,23 +11,23 @@ class ProfileController extends Controller
 {
     public function update(Request $request)
     {
-        $user = $request->user();
+        $user = auth()->user();
 
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'profile_picture_url' => 'sometimes|image|mimes:jpeg,jpg,png,webp|max:4096',
         ]);
 
-        if($request->name){
-            $user->name = $request->name;
+        if(isset($validatedData['name'])) {
+            $user->name = $validatedData['name'];
         }
 
-        if ($request->hasFile('profile_picture_url')) {
+        if (isset($validatedData['profile_picture_url'])) {
             if($user->profile_picture_url){
                 Storage::disk('public')->delete($user->profile_picture_url);
             }
 
-            $path = $request->file('profile_picture_url')->store('profile_pictures', 'public');
+            $path = $validatedData['profile_picture_url']->store('profile_pictures', 'public');
 
             $user->profile_picture_url = $path;
         }
@@ -44,7 +44,7 @@ class ProfileController extends Controller
     }
 
     public function destroy(Request $request){
-        $user = $request->user();
+        $user = auth()->user();
 
         if(!empty($user->profile_picture_url)){
             Storage::disk('public')->delete($user->profile_picture_url);

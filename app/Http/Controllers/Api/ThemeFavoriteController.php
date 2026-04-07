@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\ThemeApiResource;
 use App\Models\Theme;
 use Illuminate\Http\Request;
 

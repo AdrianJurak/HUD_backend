@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('title',255);
             $table->text('description')->nullable();
-            $table->unsignedInteger('likes')->default(0);
             $table->json('layout_config');
             $table->json('images')->nullable();
             $table->timestamps();

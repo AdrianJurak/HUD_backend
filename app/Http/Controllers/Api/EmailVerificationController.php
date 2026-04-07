@@ -20,7 +20,7 @@ class EmailVerificationController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['message' => 'User not found.'], 400);
         }
 
         if ($user->email_verified_at != null) {
@@ -35,11 +35,10 @@ class EmailVerificationController extends Controller
             return response()->json(['message' => 'Verification code has expired.'], 400);
         }
 
-        $user->update([
-            'email_verified_at' => now(),
-            'verification_token' => null,
-            'verification_token_expires_at' => null,
-        ]);
+        $user->email_verified_at = now();
+        $user->verification_token = null;
+        $user->verification_token_expires_at = null;
+        $user->save();
 
         $token = $user->createToken('android-app')->plainTextToken;
 

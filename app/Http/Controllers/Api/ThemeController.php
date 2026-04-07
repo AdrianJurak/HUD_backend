@@ -15,11 +15,27 @@ class ThemeController extends Controller
     public function index(Request $request)
     {
         $query = Theme::with('user:id,name,profile_picture_url', 'categories:id,name')
-                            ->withCount(['reviews','downloads']);
+                            ->withCount(['reviews','downloads','favoritedBy']);
 
         $query->when($request->search, function ($q, $search) {
             $q->where('title','like','%'.$search.'%')
             ->orWhere('description','like','%'.$search.'%');
+        });
+
+        $query->when($request->boolean('favorites'), function ($q) {
+            abort_if(!auth()->check(), 401,"Must be logged in to view this content.");
+
+            $q->whereHas('favoritedBy', function ($subQuery) {
+                $subQuery->where('users.id', auth()->id());
+            });
+        });
+
+        $query->when($request->categories, function ($q, $categories) {
+            $categoriesArray = is_array($categories) ? $categories : explode(',', $categories);
+
+            $q->whereHas('categories', function ($subQuery) use ($categoriesArray) {
+                $subQuery->whereIn('categories.name', $categoriesArray);
+            });
         });
 
         $sort = $request->sort ?? 'recent';
@@ -28,7 +44,11 @@ class ThemeController extends Controller
             $query->orderByDesc('downloads_count');
         }else if($sort == 'reviews'){
             $query->orderByDesc('reviews_count');
+        }else if($sort == 'likes') {
+            $query->orderByDesc('favorited_by_count');
         }else $query->latest();
+
+
 
         $themes = $query->paginate(15);
 
@@ -39,7 +59,7 @@ class ThemeController extends Controller
         $id = Theme::decodeId($hash_id);
 
         $theme = Theme::with('user:id,name,profile_picture_url','categories:id,name')
-            ->withCount(['reviews','downloads'])
+            ->withCount(['reviews','downloads','favoritedBy'])
             ->findOrFail($id);
         return new ThemeShowResource($theme);
     }
