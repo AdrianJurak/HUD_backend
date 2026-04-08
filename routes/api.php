@@ -24,7 +24,7 @@ Route::prefix('v1')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
     Route::get('themes', [ThemeController::class, 'index']);
-    Route::get('themes/{hash_id}', [ThemeController::class, 'show']);
+    Route::get('themes/{theme}', [ThemeController::class, 'show']);
 
     Route::get('categories', function () {
         $categories = Category::all(['id', 'name']);
@@ -51,19 +51,19 @@ Route::prefix('v1')->group(function () {
         Route::put('profile', [ProfileController::class, 'update']);
         Route::delete('profile', [ProfileController::class, 'destroy']);
 
-        Route::get('themes/{hash_id}/reviews', [ReviewController::class, 'index']);
-        Route::post('themes/{hash_id}/reviews', [ReviewController::class, 'store']);
-        Route::delete('themes/{hash_id}/reviews', [ReviewController::class, 'destroy']);
+        Route::get('themes/{theme}/reviews', [ReviewController::class, 'index']);
+        Route::post('themes/{theme}/reviews', [ReviewController::class, 'store']);
+        Route::delete('themes/{theme}/reviews', [ReviewController::class, 'destroy']);
 
-        Route::post('themes/{hash_id}/downloads', DownloadController::class);
+        Route::post('themes/{theme}/downloads', DownloadController::class);
 
         Route::post('flags', [FlagController::class, 'store']);
 
         Route::post('themes', [ThemeController::class, 'store']);
-        Route::put('themes/{hash_id}', [ThemeController::class, 'update']);
-        Route::delete('themes/{hash_id}', [ThemeController::class, 'destroy']);
+        Route::put('themes/{theme}', [ThemeController::class, 'update']);
+        Route::delete('themes/{theme}', [ThemeController::class, 'destroy']);
 
-        Route::post('themes/{hash_id}/favorite', [ThemeFavoriteController::class, 'toggle']);
+        Route::post('themes/{theme}/favorite', [ThemeFavoriteController::class, 'toggle']);
     });
 
 });
