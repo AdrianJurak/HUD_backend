@@ -4,7 +4,6 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificationCodeMail;
@@ -37,7 +36,7 @@ class RegisterTest extends TestCase
         $user = User::where('email', $payload['email'])->first();
         $this->assertNotNull($user->verification_token);
 
-        Mail::assertSent(VerificationCodeMail::class, function ($mail) use ($user) {
+        Mail::assertQueued(VerificationCodeMail::class, function ($mail) use ($user) {
             $isEmailCorrect = $mail->hasTo($user->email);
 
             $isTokenCorrect = $mail->token === $user->verification_token;

@@ -76,7 +76,7 @@ class LoginTest extends TestCase
 
         $response->assertStatus(401);
 
-        $response->assertJson(['error' => 'Your credentials are incorrect']);
+        $response->assertJson(['message' => 'Your credentials are incorrect']);
     }
 
     public static function invalidFieldProvider(): array
@@ -122,7 +122,7 @@ class LoginTest extends TestCase
 
         $response = $this->withToken($token)->postJson('/api/v1/logout');
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
 
         $this->assertDatabaseCount('personal_access_tokens', 0);
     }
