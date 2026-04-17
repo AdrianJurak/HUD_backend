@@ -34,7 +34,7 @@ class EmailVerificationService
         abort_if(!$user, 404, 'User not found');
         abort_if($user->verification_token_expires_at > now(), 400, 'Current code is still valid try again later');
 
-        $token = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $token = User::generateVerificationToken();
 
         $user->update([
             'verification_token' => $token,
