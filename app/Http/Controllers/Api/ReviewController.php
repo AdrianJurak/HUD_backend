@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\ReviewResource;
-use Illuminate\Http\Request;
-use App\Models\Theme;
+use App\Http\Resources\Api\Review\IndexResource;
 use App\Models\Review;
+use App\Models\Theme;
+use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
@@ -17,7 +17,7 @@ class ReviewController extends Controller
             ->with('user:id,name,profile_picture_url')
             ->paginate(20);
 
-        return ReviewResource::collection($reviews);
+        return IndexResource::collection($reviews);
     }
 
     public function store(Request $request, Theme $theme)

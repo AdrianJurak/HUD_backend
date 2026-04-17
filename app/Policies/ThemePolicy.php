@@ -47,20 +47,4 @@ class ThemePolicy
     {
         return $user->id === $theme->user_id;
     }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Theme $theme): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Theme $theme): bool
-    {
-        return false;
-    }
 }

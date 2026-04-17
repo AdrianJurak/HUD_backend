@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Theme\DestroyThemeRequest;
 use App\Http\Requests\Theme\StoreThemeRequest;
 use App\Http\Requests\Theme\UpdateThemeRequest;
-use App\Http\Resources\Api\ThemeApiResource;
-use App\Http\Resources\Api\ThemeShowResource;
+use App\Http\Resources\Api\Theme\IndexResource;
+use App\Http\Resources\Api\Theme\ShowResource;
 use App\Models\Theme;
 use App\Services\ThemeService;
 use Illuminate\Http\Request;
@@ -26,7 +26,7 @@ class ThemeController extends Controller
     {
         $themes = $this->themeService->getFilteredThemes($request->all());
 
-        return ThemeApiResource::collection($themes);
+        return IndexResource::collection($themes);
     }
 
     public function show(Theme $theme)
@@ -34,7 +34,7 @@ class ThemeController extends Controller
         $theme->load('user:id,name,profile_picture_url', 'categories:id,name')
             ->loadCount(['reviews', 'favoritedBy', 'downloads']);
 
-        return new ThemeShowResource($theme);
+        return new ShowResource($theme);
     }
 
     public function store(StoreThemeRequest $request)
@@ -45,20 +45,23 @@ class ThemeController extends Controller
             $request->file('images')
         );
 
-        return response()->json($theme, 201);
+        return response()->json([
+            'message' => 'Theme created successfully',
+            'id' => $theme->hash_id
+        ], 201);
     }
 
     public function update(UpdateThemeRequest $request, Theme $theme)
     {
         $theme->load('categories:id,name');
 
-        $theme = $this->themeService->updateTheme(
+        $this->themeService->updateTheme(
             $theme,
             $request->validated(),
             $request->file('images')
         );
 
-        return response()->json($theme);
+        return response()->noContent();
     }
 
     public function destroy(DestroyThemeRequest $request, Theme $theme)

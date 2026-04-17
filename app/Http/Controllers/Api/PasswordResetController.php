@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PasswordReset\PasswordRecoveryTokenRequest;
 use App\Mail\VerificationCodeMail;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,25 +12,15 @@ use Illuminate\Support\Facades\Mail;
 
 class PasswordResetController extends Controller
 {
-    public function passwordRecoveryToken(Request $request)
+    public function passwordRecoveryToken(PasswordRecoveryTokenRequest $request)
     {
-        $validatedData = $request->validate([
-            'email' => 'required|string|email',
-        ]);
+        $validatedData = $request->validated();
 
         $user = User::where('email', $validatedData['email'])->first();
 
-        if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
-        }
-
-        if ($user->email_verified_at == null) {
-            return response()->json(['message' => 'Email is unverified.'], 400);
-        }
-
-        if($user->verification_token_expires_at > now()) {
-            return response()->json(['message' => 'Previous token is still valid'], 400);
-        }
+        abort_if(!$user, 404, 'User not found.');
+        abort_if($user->email_verified_at, 400, 'Email is unverified.');
+        abort_if($user->verification_token_expires_at > now(), 400, 'Previous token is still valid');
 
         $token = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 

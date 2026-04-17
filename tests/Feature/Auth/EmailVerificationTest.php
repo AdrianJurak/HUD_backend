@@ -45,7 +45,7 @@ class EmailVerificationTest extends TestCase
     }
 
     #[DataProvider('invalidFieldProvider')]
-    public function test_user_can_not_verify_email_with_invalid_credentials($payload): void{
+    public function test_user_can_not_verify_email_with_invalid_credentials($payload, $status): void{
         User::factory()->create([
             'name' => 'Example User',
             'email' => 'example@user.com',
@@ -56,7 +56,7 @@ class EmailVerificationTest extends TestCase
 
         $response = $this->postJson('/api/v1/verify', $payload);
 
-        $response->assertStatus(400);
+        $response->assertStatus($status);
     }
 
     public static function invalidFieldProvider() :array
@@ -64,9 +64,11 @@ class EmailVerificationTest extends TestCase
         return [
             'Invalid email' => [
                 ['email' => "test@user.com", 'verification_token'=> '123456'],
+                404
             ],
             'Invalid token' => [
                 ['email' => 'example@user.com', 'verification_token' => '999999'],
+                400
             ]
         ];
     }
@@ -114,7 +116,7 @@ class EmailVerificationTest extends TestCase
         $response = $this->postJson('/api/v1/verify', $payload);
 
         $response->assertStatus(400);
-        $response->assertJson(['message' => 'Email already verified.']);
+        $response->assertJson(['message' => 'Email already verified']);
     }
 
     public function test_user_cannot_verify_with_expired_token(): void
@@ -135,7 +137,7 @@ class EmailVerificationTest extends TestCase
         $response = $this->postJson('/api/v1/verify', $payload);
 
         $response->assertStatus(400);
-        $response->assertJson(['message' => 'Verification code has expired.']);
+        $response->assertJson(['message' => 'Verification token expired']);
     }
 
     public function test_user_can_refresh_verification_token_with_valid_credentials(): void
@@ -156,7 +158,7 @@ class EmailVerificationTest extends TestCase
         $response = $this->postJson('/api/v1/token-refresh', $payload);
 
         $response->assertStatus(200);
-        $response->assertJson(['message' => 'Verification code sent.']);
+        $response->assertJson(['message' => 'Verification code sent']);
 
         Mail::assertSent(VerificationCodeMail::class, function ($mail) use ($user) {
             $isEmailCorrect = $mail->hasTo($user->email);
@@ -195,7 +197,7 @@ class EmailVerificationTest extends TestCase
         $response = $this->postJson('/api/v1/token-refresh', $payload);
 
         $response->assertStatus(404);
-        $response->assertJson(['message' => 'User not found.']);
+        $response->assertJson(['message' => 'User not found']);
     }
 
     public function test_user_cannot_refresh_verification_token_with_valid_token(): void

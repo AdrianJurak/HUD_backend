@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Api;
+namespace App\Http\Resources\Api\Review;
 
-use Illuminate\Http\Request;
-use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ReviewResource extends JsonResource
+class IndexResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Flag extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'reported_user_id',
@@ -20,6 +21,14 @@ class Flag extends Model
         'reason',
         'status'
     ];
+
+    public function scopeAlreadyFlagged($query, $reporterId, $themeId, $userId, $reviewId)
+    {
+        return $query->where('user_id', $reporterId)
+            ->when($themeId, fn($q) => $q->where('theme_id', $themeId))
+            ->when($userId, fn($q) => $q->where('user_id', $userId))
+            ->when($reviewId, fn($q) => $q->where('review_id', $reviewId));
+    }
 
     public function user(): BelongsTo
     {

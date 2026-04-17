@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Api;
+namespace App\Http\Resources\Api\Theme;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ThemeApiResource extends JsonResource
+class ShowResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,11 +13,16 @@ class ThemeApiResource extends JsonResource
      */
     public function toArray($request)
     {
-        $firstImage = !empty($this->images) ? $this->images[0] : null;
         return [
             'id' => $this->hash_id,
             'title' => $this->title,
-            'images' => $firstImage ? asset('storage/'.$firstImage) : null,
+            'description' => $this->description,
+            'layout_config' => $this->layout_config,
+
+            'images' => collect($this->images)->map(function($path){
+                return asset("storage/".$path);
+            })->toArray(),
+
             'likes_count' => $this->favorited_by_count,
             'reviews_count' => $this->reviews_count,
             'downloads_count' => $this->downloads_count,
@@ -27,14 +31,13 @@ class ThemeApiResource extends JsonResource
                 'id' => $this->user->hash_id,
                 'name'=> $this->user->name,
                 'profile_picture_url' => $this->user->profile_picture_url
-                    ? asset('storage/'.$this->user->profile_picture_url)
-                    : null,
+                ? asset('storage/'.$this->user->profile_picture_url)
+                : null,
             ],
 
             'categories' => [
                 'name' => $this->categories->pluck('name'),
-            ],
-
+            ]
         ];
     }
 }

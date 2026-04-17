@@ -3,6 +3,7 @@
 namespace Tests\Feature\Theme;
 
 use App\Models\Category;
+use App\Models\Theme;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -57,12 +58,15 @@ class StoreTest extends TestCase
             'description' => 'Example Description',
         ]);
 
+        $themeId = Theme::decodeId($response->json('id'));
+        $theme = Theme::find($themeId);
+
         $this->assertDatabaseHas('category_theme', [
-            'theme_id' => $response->json('id'),
+            'theme_id' => $themeId,
             'category_id' => $dark->id,
         ]);
 
-        $images = $response->json('images');
+        $images = $theme->images;
 
         $this->assertNotEmpty($images);
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\UserResource;
+use App\Http\Resources\Api\User\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -37,7 +37,6 @@ class ProfileController extends Controller
         $hashedUser = new UserResource($user);
 
         return response()->json([
-            'success' => 'success',
             'message' => 'Profile updated successfully.',
             'user' => $hashedUser,
         ]);

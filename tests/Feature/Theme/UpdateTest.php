@@ -68,7 +68,7 @@ class UpdateTest extends TestCase
 
         $response = $this->actingAs($this->user)->putJson('/api/v1/themes/'.$this->theme->hash_id, $payload);
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
 
         $this->assertDatabaseHas('themes', [
             'title' => $payload['title'],
@@ -81,16 +81,20 @@ class UpdateTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('category_theme', [
-            'theme_id' => $response->json('id'),
+            'theme_id' => $this->theme->id,
             'category_id' => $light->id,
         ]);
 
         $this->assertDatabaseMissing('category_theme', [
-            'theme_id' => $response->json('id'),
+            'theme_id' => $this->theme->id,
             'category_id' => $dark->id,
         ]);
 
-        $images = $response->json('images');
+        Storage::disk('public')->assertMissing($this->theme->images);
+
+        $this->theme->refresh();
+
+        $images = $this->theme->images;
 
         $this->assertNotEmpty($images);
 
@@ -99,8 +103,6 @@ class UpdateTest extends TestCase
         foreach ($images as $imagePath) {
             Storage::disk('public')->assertExists($imagePath);
         }
-
-        Storage::disk('public')->assertMissing($this->theme->images);
     }
 
     public function test_guest_user_cannot_update_a_theme(): void
