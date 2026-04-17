@@ -18,12 +18,12 @@ class ProfileController extends Controller
             'profile_picture_url' => 'sometimes|image|mimes:jpeg,jpg,png,webp|max:4096',
         ]);
 
-        if(isset($validatedData['name'])) {
+        if (isset($validatedData['name'])) {
             $user->name = $validatedData['name'];
         }
 
         if (isset($validatedData['profile_picture_url'])) {
-            if($user->profile_picture_url){
+            if ($user->profile_picture_url) {
                 Storage::disk('public')->delete($user->profile_picture_url);
             }
 
@@ -43,10 +43,11 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function destroy(Request $request){
+    public function destroy(Request $request)
+    {
         $user = auth()->user();
 
-        if(!empty($user->profile_picture_url)){
+        if (!empty($user->profile_picture_url)) {
             Storage::disk('public')->delete($user->profile_picture_url);
         }
 

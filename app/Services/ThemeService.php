@@ -74,11 +74,15 @@ class ThemeService
             $data['images'] = $this->uploadImages($images);
         }
 
-        $theme->update($data);
-
         if (isset($data['categories'])) {
-            $theme->categories()->sync($data['categories']);
+            $categoriesToSync = $data['categories'];
+
+            unset($data['categories']);
+
+            $theme->categories()->sync($categoriesToSync);
         }
+
+        $theme->update($data);
 
         return $theme;
     }

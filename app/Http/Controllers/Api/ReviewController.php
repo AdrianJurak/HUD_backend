@@ -11,29 +11,25 @@ use App\Models\Review;
 class ReviewController extends Controller
 {
 
-    public function index($hashed_theme_id){
-        $theme_id = Theme::decodeId($hashed_theme_id);
-
-        $reviews = Review::with('user:id,name,profile_picture_url')
-                                ->where('theme_id', $theme_id)
-                                ->paginate(20);
+    public function index(Theme $theme)
+    {
+        $reviews = $theme->reviews()
+            ->with('user:id,name,profile_picture_url')
+            ->paginate(20);
 
         return ReviewResource::collection($reviews);
     }
-    public function store(Request $request, $hashed_theme_id)
-    {
-        $theme_id = Theme::decodeId($hashed_theme_id);
 
+    public function store(Request $request, Theme $theme)
+    {
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'title' => 'nullable|required|string|max:255',
-            'comment' => 'nullable|required|string|max:1000'
+            'title' => 'nullable|string|max:255',
+            'comment' => 'nullable|string|max:1000'
         ]);
 
-        $theme = Theme::findOrFail($theme_id);
-
         $review = $theme->reviews()->updateOrCreate(
-            ['user_id' => $request->user()->id],
+            ['user_id' => auth()->user()->id],
             [
                 'rating' => $request->rating,
                 'title' => $request->title,
@@ -45,18 +41,17 @@ class ReviewController extends Controller
             "status" => "success",
             'message' => 'Review is saved successfully.',
             'review' => $review
-        ],201);
+        ], 201);
     }
 
-    public function destroy(Request $request,$id){
-        $review = Review::findOrFail($id);
-
-        if($request->user()->id !== $review->user_id){
-            return response()->json(['unauthorized'], 403);
+    public function destroy(Theme $theme, Review $review)
+    {
+        if (auth()->id() != $review->user_id) {
+            return response()->json(['message' => 'unauthorized'], 403);
         }
 
         $review->delete();
 
-        return response()->json(['Review removed'],200);
+        return response()->json(['message' => 'Review removed'], 200);
     }
 }

@@ -50,7 +50,6 @@ class ThemeController extends Controller
 
     public function update(UpdateThemeRequest $request, Theme $theme)
     {
-
         $theme->load('categories:id,name');
 
         $theme = $this->themeService->updateTheme(
@@ -59,13 +58,13 @@ class ThemeController extends Controller
             $request->file('images')
         );
 
-        return response()->json($theme, 201);
+        return response()->json($theme);
     }
 
     public function destroy(DestroyThemeRequest $request, Theme $theme)
     {
         $this->themeService->deleteTheme($theme);
 
-        return response()->json(["Theme removed"]);
+        return response()->noContent();
     }
 }

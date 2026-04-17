@@ -22,6 +22,17 @@ class Review extends Model
         'comment'
     ];
 
+    public function resolveRouteBinding($value, $field = null)
+    {
+        $decodeId = self::decodeId($value);
+
+        if(!$decodeId) {
+            return null;
+        }
+
+        return $this->where('id', $decodeId)->firstOrFail();
+    }
+
     public function user(): BelongsTo{
         return $this->belongsTo(User::class);
     }

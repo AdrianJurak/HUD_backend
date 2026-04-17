@@ -26,6 +26,8 @@ Route::prefix('v1')->group(function () {
     Route::get('themes', [ThemeController::class, 'index']);
     Route::get('themes/{theme}', [ThemeController::class, 'show']);
 
+    Route::get('themes/{theme}/reviews', [ReviewController::class, 'index']);
+
     Route::get('categories', function () {
         $categories = Category::all(['id', 'name']);
 
@@ -51,11 +53,10 @@ Route::prefix('v1')->group(function () {
         Route::put('profile', [ProfileController::class, 'update']);
         Route::delete('profile', [ProfileController::class, 'destroy']);
 
-        Route::get('themes/{theme}/reviews', [ReviewController::class, 'index']);
         Route::post('themes/{theme}/reviews', [ReviewController::class, 'store']);
-        Route::delete('themes/{theme}/reviews', [ReviewController::class, 'destroy']);
+        Route::delete('themes/{theme}/reviews/{review}', [ReviewController::class, 'destroy']);
 
-        Route::post('themes/{theme}/downloads', DownloadController::class);
+        Route::post('themes/{theme}/download', DownloadController::class);
 
         Route::post('flags', [FlagController::class, 'store']);
 

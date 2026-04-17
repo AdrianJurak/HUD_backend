@@ -9,11 +9,7 @@ use Illuminate\Http\Request;
 
 class DownloadController extends Controller
 {
-    public function __invoke($hash_theme_id){
-        $theme_id = Theme::decodeId($hash_theme_id);
-
-        $theme = Theme::findOrFail($theme_id);
-
+    public function __invoke(Theme $theme){
         $user = auth()->user();
 
         $alreadyDownloaded = $theme->downloads()->where('user_id', $user->id)->exists();

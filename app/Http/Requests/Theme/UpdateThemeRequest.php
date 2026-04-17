@@ -27,7 +27,7 @@ class UpdateThemeRequest extends FormRequest
             'title' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|nullable|string',
             'layout_config' => 'sometimes|required|array',
-            'images' => 'sometimes|nullable|array',
+            'images' => 'sometimes|nullable|array|max:5',
             'images.*' => 'sometimes|file|image|mimes:jpeg,png,jpg,gif|max:8192',
             'categories' => 'sometimes|array',
         ];

@@ -133,4 +133,31 @@ class ProfileTest extends TestCase
             ],
         ];
     }
+
+    public function test_user_can_delete_their_profile(): void
+    {
+        $imagePath = 'themes/fake_image_1.jpg';
+        Storage::disk('public')->put($imagePath, 'test content');
+
+        $user = User::factory()->create([
+            'name' => 'Example User',
+            'email' => 'example@user.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+            'profile_picture_url' => $imagePath,
+        ]);
+
+        $response = $this->actingAs($user)->deleteJson('/api/v1/profile');
+
+        $response->assertStatus(200);
+
+        Storage::disk('public')->assertMissing($imagePath);
+    }
+
+    public function test_guest_cannot_delete_profile(): void
+    {
+        $response = $this->deleteJson('/api/v1/profile');
+
+        $response->assertStatus(401);
+    }
 }
