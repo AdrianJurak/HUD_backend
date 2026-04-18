@@ -29,10 +29,12 @@ class ProfileTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson([
-            'id' => $user->hash_id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'profile_picture_url' => null,
+            'data' => [
+                'id' => $user->hash_id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'profile_picture_url' => null,
+            ]
         ]);
     }
 
@@ -51,10 +53,12 @@ class ProfileTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson([
-            'id' => $user->hash_id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'profile_picture_url' => asset('storage/avatars/my-cool-avatar.jpg'),
+            'data' => [
+                'id' => $user->hash_id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'profile_picture_url' => asset('storage/avatars/my-cool-avatar.jpg'),
+            ]
         ]);
     }
 
@@ -149,7 +153,7 @@ class ProfileTest extends TestCase
 
         $response = $this->actingAs($user)->deleteJson('/api/v1/profile');
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
 
         Storage::disk('public')->assertMissing($imagePath);
     }

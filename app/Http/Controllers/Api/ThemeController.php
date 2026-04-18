@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Theme\DestroyThemeRequest;
+use App\Http\Requests\Theme\IndexRequest;
 use App\Http\Requests\Theme\StoreThemeRequest;
 use App\Http\Requests\Theme\UpdateThemeRequest;
 use App\Http\Resources\Api\Theme\IndexResource;
@@ -15,16 +16,11 @@ use Illuminate\Http\Request;
 
 class ThemeController extends Controller
 {
-    private ThemeService $themeService;
+    public function __construct(private ThemeService $themeService){}
 
-    public function __construct(ThemeService $themeService)
+    public function index(IndexRequest $request)
     {
-        $this->themeService = $themeService;
-    }
-
-    public function index(Request $request)
-    {
-        $themes = $this->themeService->getFilteredThemes($request->all());
+        $themes = $this->themeService->getFilteredThemes($request->validated());
 
         return IndexResource::collection($themes);
     }
@@ -53,9 +49,7 @@ class ThemeController extends Controller
 
     public function update(UpdateThemeRequest $request, Theme $theme)
     {
-        $theme->load('categories:id,name');
-
-        $this->themeService->updateTheme(
+      $this->themeService->updateTheme(
             $theme,
             $request->validated(),
             $request->file('images')

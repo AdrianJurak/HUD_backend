@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Resources\Api\User\UserResource;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FlagController;
 use App\Http\Controllers\Api\ProfileController;
@@ -12,6 +14,7 @@ use App\Http\Controllers\Api\PasswordResetController;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 Route::prefix('v1')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
 
@@ -28,28 +31,12 @@ Route::prefix('v1')->group(function () {
 
     Route::get('themes/{theme}/reviews', [ReviewController::class, 'index']);
 
-    Route::get('categories', function () {
-        $categories = Category::all(['id', 'name']);
-
-        return response()->json($categories, 200);
-    });
+    Route::get('categories', [CategoryController::class, 'index']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
 
-        Route::get('user', function (Request $request) {
-            $user = $request->user();
-
-            return response()->json([
-                'id' => $user->hash_id,
-                'name' => $user->name,
-                'email' => $user->email,
-
-                'profile_picture_url' => $user->profile_picture_url
-                    ? asset('storage/' . $user->profile_picture_url)
-                    : null,
-            ]);
-        });
+        Route::get('user', [ProfileController::class, 'show']);
         Route::put('profile', [ProfileController::class, 'update']);
         Route::delete('profile', [ProfileController::class, 'destroy']);
 

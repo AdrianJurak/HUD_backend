@@ -12,44 +12,17 @@ class ThemeService
     {
         $data = $data ?? [];
 
-        $query = Theme::with('user:id,name,profile_picture_url', 'categories:id,name')
-            ->withCount(['reviews', 'downloads', 'favoritedBy']);
+        $wantsFavorites = filter_var($data['favorites'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        abort_if($wantsFavorites && !auth()->check(), 401, 'Must be logged in');
 
-        $query->when($data['search'] ?? null, function ($q, $search) {
-            $q->where(function ($subQuery) use ($search) {
-                $subQuery->where('title', 'like', '%' . $search . '%')
-                    ->orWhere('description', 'like', '%' . $search . '%');
-            });
-        });
-
-        $query->when(isset($data['favorites']) && filter_var($data['favorites'], FILTER_VALIDATE_BOOLEAN), function ($q) {
-            abort_if(!auth()->check(), 401, "Must be logged in to view this content.");
-
-            $q->whereHas('favoritedBy', function ($subQuery) {
-                $subQuery->where('users.id', auth()->id());
-            });
-        });
-
-        $query->when($data['categories'] ?? null, function ($q, $categories) {
-            $categoriesArray = is_array($categories) ? $categories : explode(',', $categories);
-
-            $q->whereHas('categories', function ($subQuery) use ($categoriesArray) {
-                $subQuery->whereIn('categories.name', $categoriesArray);
-            });
-        });
-
-        $sort = $data['sort'] ?? 'recent';
-
-        if ($sort === 'downloads') {
-            $query->orderByDesc('downloads_count');
-        } else if ($sort === 'reviews') {
-            $query->orderByDesc('reviews_count');
-        } else if ($sort === 'likes') {
-            $query->orderByDesc('favorited_by_count');
-        } else $query->latest();
-
-
-        return $query->paginate(15);
+        return Theme::query()
+            ->with('user:id,name,profile_picture_url', 'categories:id,name')
+            ->withCount(['reviews','downloads','favoritedBy'])
+            ->search($data['search'] ?? null)
+            ->filterByCategories($data['categories'] ?? null)
+            ->when($wantsFavorites, fn($q) => $q->favoritedByUser(auth()->id()))
+            ->applySort($data['sort'] ?? 'recent')
+            ->paginate(15);
     }
 
     public function createTheme(array $data, $user, $images = null)

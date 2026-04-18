@@ -34,11 +34,51 @@ class Theme extends Model
     {
         $decodeId = self::decodeId($value);
 
-        if(!$decodeId) {
+        if (!$decodeId) {
             return null;
         }
 
         return $this->where('id', $decodeId)->firstOrFail();
+    }
+
+    public function scopeSearch($query, ?string $search)
+    {
+        return $query->when($search, fn($q) =>
+            $q->where(fn($subQuery) =>
+                $subQuery->where('title', 'like', '%' . $search . '%')
+                         ->orWhere('description', 'like', '%' . $search . '%')
+            )
+        );
+    }
+
+    public function scopeFavoritedByUser($query, ?int $user_id)
+    {
+        return $query->when($user_id, fn($q) =>
+            $q->whereHas('favoritedBy', fn($subQuery) =>
+                $subQuery->where('user_id', $user_id)
+            )
+        );
+    }
+
+    public function scopeFilterByCategories($query, $categories)
+    {
+        return $query->when($categories, function ($q) use ($categories) {
+            $categoriesArray = is_array($categories) ? $categories : explode(',', $categories);
+
+            $q->whereHas('categories', function ($subQuery) use ($categoriesArray) {
+                $subQuery->whereIn('categories.name', $categoriesArray);
+            });
+        });
+    }
+
+    public function scopeApplySort($query, ?string $sort)
+    {
+        return match ($sort) {
+          'downloads' => $query->orderByDesc('downloads_count'),
+          'reviews' => $query->orderByDesc('reviews_count'),
+          'likes' =>  $query->orderByDesc('favorited_by_count'),
+          default => $query->latest(),
+        };
     }
 
     public function user(): BelongsTo
