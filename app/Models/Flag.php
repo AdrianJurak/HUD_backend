@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Review;
-use App\Models\Theme;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Flag extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'reported_user_id',
@@ -20,6 +19,14 @@ class Flag extends Model
         'reason',
         'status'
     ];
+
+    public function scopeAlreadyFlagged($query, $userId, $themeId, $reportedUserId, $reviewId): Builder
+    {
+        return $query->where('user_id', $userId)
+            ->when($themeId, fn($q) => $q->where('theme_id', $themeId))
+            ->when($reportedUserId, fn($q) => $q->where('user_id', $reportedUserId))
+            ->when($reviewId, fn($q) => $q->where('review_id', $reviewId));
+    }
 
     public function user(): BelongsTo
     {

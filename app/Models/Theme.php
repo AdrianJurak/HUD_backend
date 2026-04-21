@@ -2,12 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Review;
-use App\Models\Download;
-use App\Models\User;
-use App\Models\Flag;
 use App\Traits\HasHashids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -21,7 +18,6 @@ class Theme extends Model
         'user_id',
         'title',
         'description',
-        'likes',
         'layout_config',
         'images'
     ];
@@ -30,6 +26,57 @@ class Theme extends Model
         'layout_config' => 'array',
         'images' => 'array'
     ];
+
+    public function resolveRouteBinding($value, $field = null): ?Model
+    {
+        $decodeId = self::decodeId($value);
+
+        if (!$decodeId) {
+            return null;
+        }
+
+        return $this->where('id', $decodeId)->firstOrFail();
+    }
+
+    public function scopeSearch($query, ?string $search): Builder
+    {
+        return $query->when($search, fn($q) =>
+            $q->where(fn($subQuery) =>
+                $subQuery->where('title', 'like', '%' . $search . '%')
+                         ->orWhere('description', 'like', '%' . $search . '%')
+            )
+        );
+    }
+
+    public function scopeFavoritedByUser($query, ?int $user_id): Builder
+    {
+        return $query->when($user_id, fn($q) =>
+            $q->whereHas('favoritedBy', fn($subQuery) =>
+                $subQuery->where('user_id', $user_id)
+            )
+        );
+    }
+
+    public function scopeFilterByCategories($query, $categories): Builder
+    {
+        return $query->when($categories, function ($q) use ($categories) {
+            $categoriesArray = is_array($categories) ? $categories : explode(',', $categories);
+
+            $q->whereHas('categories', function ($subQuery) use ($categoriesArray) {
+                $subQuery->whereIn('categories.name', $categoriesArray);
+            });
+        });
+    }
+
+    public function scopeApplySort($query, ?string $sort): Builder
+    {
+        return match ($sort) {
+          'downloads' => $query->orderByDesc('downloads_count'),
+          'reviews' => $query->orderByDesc('reviews_count'),
+          'likes' =>  $query->orderByDesc('favorited_by_count'),
+          default => $query->latest(),
+        };
+    }
 
     public function user(): BelongsTo
     {

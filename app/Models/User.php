@@ -4,18 +4,16 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Traits\HasHashids;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Theme;
-use App\Models\Review;
-use App\Models\Download;
-use App\Models\Flag;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, HasHashids, Notifiable;
 
@@ -39,9 +37,20 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'verification_token_expires_at' => 'datetime',
             'password' => 'hashed',
             'is_banned' => 'boolean',
         ];
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public static function generateVerificationToken(): string
+    {
+        return str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
     }
 
     public function themes(): HasMany

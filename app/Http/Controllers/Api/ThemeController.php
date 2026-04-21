@@ -3,132 +3,68 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\ThemeApiResource;
-use App\Http\Resources\Api\ThemeShowResource;
-use Illuminate\Http\Request;
+use App\Http\Requests\Theme\DestroyThemeRequest;
+use App\Http\Requests\Theme\IndexRequest;
+use App\Http\Requests\Theme\StoreThemeRequest;
+use App\Http\Requests\Theme\UpdateThemeRequest;
+use App\Http\Resources\Api\Theme\IndexResource;
+use App\Http\Resources\Api\Theme\ShowResource;
 use App\Models\Theme;
-use Illuminate\Support\Facades\Storage;
+use App\Services\ThemeService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 
 class ThemeController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(private ThemeService $themeService){}
+
+    public function index(IndexRequest $request): AnonymousResourceCollection
     {
-        $query = Theme::with('user:id,name,profile_picture_url', 'categories:id,name')
-                            ->withCount(['reviews','downloads']);
+        $themes = $this->themeService->getFilteredThemes($request->validated());
 
-        $query->when($request->search, function ($q, $search) {
-            $q->where('title','like','%'.$search.'%')
-            ->orWhere('description','like','%'.$search.'%');
-        });
-
-        $sort = $request->sort ?? 'recent';
-
-        if($sort == 'downloads'){
-            $query->orderByDesc('downloads_count');
-        }else if($sort == 'reviews'){
-            $query->orderByDesc('reviews_count');
-        }else $query->latest();
-
-        $themes = $query->paginate(15);
-
-        return ThemeApiResource::collection($themes);
+        return IndexResource::collection($themes);
     }
 
-    public function show($hash_id){
-        $id = Theme::decodeId($hash_id);
+    public function show(Theme $theme): ShowResource
+    {
+        $theme->load('user:id,name,profile_picture_url', 'categories:id,name')
+            ->loadCount(['reviews', 'favoritedBy', 'downloads']);
 
-        $theme = Theme::with('user:id,name,profile_picture_url','categories:id,name')
-            ->withCount(['reviews','downloads'])
-            ->findOrFail($id);
-        return new ThemeShowResource($theme);
+        return new ShowResource($theme);
     }
 
-    public function store(Request $request){
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'layout_config' => 'required|array',
-            'images' => 'nullable|array|max:5',
-            'images.*' => 'file|image|mimes:jpeg,png,jpg,gif|max:8192',
-            'categories' => 'array',
-        ]);
+    public function store(StoreThemeRequest $request): JsonResponse
+    {
+        $theme = $this->themeService->createTheme(
+            $request->validated(),
+            $request->user(),
+            $request->file('images')
+        );
 
-        $imagePaths = [];
-
-        if($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('theme_images', 'public');
-                $imagePaths[] = $path;
-            }
-        }
-
-        $validatedData['images'] = $imagePaths;
-
-        $theme = $request->user()->themes()->create($validatedData);
-
-        if($request->has('categories')) {
-            $theme->categories()->sync($request->categories);
-        }
-
-        return response()->json($theme, 201);
+        return response()->json([
+            'message' => 'Theme created successfully',
+            'id' => $theme->hash_id
+        ], 201);
     }
 
-    public function update(Request $request, $hash_id){
-        $id = Theme::decodeId($hash_id);
+    public function update(UpdateThemeRequest $request, Theme $theme): Response
+    {
+      $this->themeService->updateTheme(
+            $theme,
+            $request->validated(),
+            $request->file('images')
+        );
 
-        $theme = Theme::findOrFail($id);
-
-        if($request->user()->id !== $theme->user_id){
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        $validatedData = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|nullable|string',
-            'layout_config' => 'sometimes|required|array',
-            'images' => 'sometimes|nullable|array',
-            'images.*' => 'sometimes|file|image|mimes:jpeg,png,jpg,gif|max:8192',
-            'categories' => 'sometimes|array',
-        ]);
-
-        $imagePaths = [];
-
-        if($request->hasFile('images')) {
-            if(!empty($theme->images)){
-                Storage::disk('public')->delete($theme->images);
-            }
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('theme_images', 'public');
-                $imagePaths[] = $path;
-            }
-            $validatedData['images'] = $imagePaths;
-        }
-
-        $theme->update($validatedData);
-
-        if($request->has('categories')) {
-            $theme->categories()->sync($request->categories);
-        }
-
-        return response()->json($theme, 201);
+        return response()->noContent();
     }
 
-    public function destroy(Request $request,$hash_id){
-        $id = Theme::decodeId($hash_id);
+    public function destroy(DestroyThemeRequest $request, Theme $theme): Response
+    {
+        $this->themeService->deleteTheme($theme);
 
-        $theme = Theme::findOrFail($id);
-
-        if($request->user()->id !== $theme->user_id){
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        if(!empty($theme->images)){
-            Storage::disk('public')->delete($theme->images);
-        }
-
-        $theme->delete();
-
-        return response()->json(["Theme removed"], 200);
+        return response()->noContent();
     }
 }
