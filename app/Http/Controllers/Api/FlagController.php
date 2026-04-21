@@ -8,10 +8,11 @@ use App\Models\Flag;
 use App\Models\Review;
 use App\Models\Theme;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 
 class FlagController extends Controller
 {
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): JsonResponse
     {
         $data = $request->validated();
 

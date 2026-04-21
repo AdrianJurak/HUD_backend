@@ -6,18 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginUserRequest;
 use App\Http\Requests\Auth\RegisterUserRequest;
 use App\Services\AuthService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
-    private AuthService $authService;
+    public function __construct(private AuthService $authService){}
 
-    public function __construct(AuthService $authService)
-    {
-        $this->authService = $authService;
-    }
-
-    public function register(RegisterUserRequest $request)
+    public function register(RegisterUserRequest $request): JsonResponse
     {
         $user = $this->authService->register($request->validated());
 
@@ -27,14 +24,14 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(LoginUserRequest $request)
+    public function login(LoginUserRequest $request): JsonResponse
     {
         $result = $this->authService->login($request->validated());
 
         return response()->json($result);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): Response
     {
         $request->user()->currentAccessToken()->delete();
 

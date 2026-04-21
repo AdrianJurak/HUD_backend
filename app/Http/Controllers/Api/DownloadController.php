@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Theme;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DownloadController extends Controller
 {
-    public function __invoke(Theme $theme)
+    public function __invoke(Theme $theme): JsonResponse
     {
         $download = $theme->downloads()->firstOrCreate([
             'user_id' => auth()->id()

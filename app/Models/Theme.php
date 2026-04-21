@@ -2,12 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Review;
-use App\Models\Download;
-use App\Models\User;
-use App\Models\Flag;
 use App\Traits\HasHashids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -30,7 +27,7 @@ class Theme extends Model
         'images' => 'array'
     ];
 
-    public function resolveRouteBinding($value, $field = null)
+    public function resolveRouteBinding($value, $field = null): ?Model
     {
         $decodeId = self::decodeId($value);
 
@@ -41,7 +38,7 @@ class Theme extends Model
         return $this->where('id', $decodeId)->firstOrFail();
     }
 
-    public function scopeSearch($query, ?string $search)
+    public function scopeSearch($query, ?string $search): Builder
     {
         return $query->when($search, fn($q) =>
             $q->where(fn($subQuery) =>
@@ -51,7 +48,7 @@ class Theme extends Model
         );
     }
 
-    public function scopeFavoritedByUser($query, ?int $user_id)
+    public function scopeFavoritedByUser($query, ?int $user_id): Builder
     {
         return $query->when($user_id, fn($q) =>
             $q->whereHas('favoritedBy', fn($subQuery) =>
@@ -60,7 +57,7 @@ class Theme extends Model
         );
     }
 
-    public function scopeFilterByCategories($query, $categories)
+    public function scopeFilterByCategories($query, $categories): Builder
     {
         return $query->when($categories, function ($q) use ($categories) {
             $categoriesArray = is_array($categories) ? $categories : explode(',', $categories);
@@ -71,7 +68,7 @@ class Theme extends Model
         });
     }
 
-    public function scopeApplySort($query, ?string $sort)
+    public function scopeApplySort($query, ?string $sort): Builder
     {
         return match ($sort) {
           'downloads' => $query->orderByDesc('downloads_count'),

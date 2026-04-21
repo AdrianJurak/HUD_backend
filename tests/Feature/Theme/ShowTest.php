@@ -43,9 +43,7 @@ class ShowTest extends TestCase
                     'name',
                     'profile_picture_url'
                 ],
-                'categories' => [
-                    'name'
-                ]
+                'categories' => []
             ]
 
         ]);

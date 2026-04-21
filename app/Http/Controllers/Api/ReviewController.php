@@ -7,12 +7,14 @@ use App\Http\Requests\Review\StoreRequest;
 use App\Http\Resources\Api\Review\IndexResource;
 use App\Models\Review;
 use App\Models\Theme;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Gate;
 
 class ReviewController extends Controller
 {
 
-    public function index(Theme $theme)
+    public function index(Theme $theme): AnonymousResourceCollection
     {
         $reviews = $theme->reviews()
             ->with('user:id,name,profile_picture_url')
@@ -21,7 +23,7 @@ class ReviewController extends Controller
         return IndexResource::collection($reviews);
     }
 
-    public function store(StoreRequest $request, Theme $theme)
+    public function store(StoreRequest $request, Theme $theme): JsonResponse
     {
         $theme->reviews()->updateOrCreate(
             ['user_id' => auth()->id()],
@@ -31,7 +33,7 @@ class ReviewController extends Controller
         return response()->json(['message' => 'Review is saved successfully.'], 201);
     }
 
-    public function destroy(Theme $theme, Review $review)
+    public function destroy(Theme $theme, Review $review): JsonResponse
     {
         Gate::authorize('delete', $review);
 

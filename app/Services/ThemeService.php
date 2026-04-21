@@ -17,7 +17,7 @@ class ThemeService
 
         return Theme::query()
             ->with('user:id,name,profile_picture_url', 'categories:id,name')
-            ->withCount(['reviews','downloads','favoritedBy'])
+            ->withCount(['reviews', 'downloads', 'favoritedBy'])
             ->search($data['search'] ?? null)
             ->filterByCategories($data['categories'] ?? null)
             ->when($wantsFavorites, fn($q) => $q->favoritedByUser(auth()->id()))
@@ -25,7 +25,7 @@ class ThemeService
             ->paginate(15);
     }
 
-    public function createTheme(array $data, $user, $images = null)
+    public function createTheme(array $data, $user, $images = null): Theme
     {
         if ($images) {
             $data['images'] = $this->uploadImages($images);
@@ -40,7 +40,7 @@ class ThemeService
         return $theme;
     }
 
-    public function updateTheme(Theme $theme, array $data, $images = null)
+    public function updateTheme(Theme $theme, array $data, $images = null): Theme
     {
         if ($images) {
             $this->deleteImages($theme->images);
@@ -60,7 +60,7 @@ class ThemeService
         return $theme;
     }
 
-    public function deleteTheme(Theme $theme)
+    public function deleteTheme(Theme $theme): void
     {
         $this->deleteImages($theme->images);
         $theme->delete();
@@ -75,7 +75,7 @@ class ThemeService
         return $imagePaths;
     }
 
-    public function deleteImages(?array $images)
+    public function deleteImages(?array $images): void
     {
         if (!empty($images)) {
             Storage::disk('public')->delete($images);

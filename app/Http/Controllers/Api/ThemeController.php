@@ -11,21 +11,24 @@ use App\Http\Resources\Api\Theme\IndexResource;
 use App\Http\Resources\Api\Theme\ShowResource;
 use App\Models\Theme;
 use App\Services\ThemeService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 
 class ThemeController extends Controller
 {
     public function __construct(private ThemeService $themeService){}
 
-    public function index(IndexRequest $request)
+    public function index(IndexRequest $request): AnonymousResourceCollection
     {
         $themes = $this->themeService->getFilteredThemes($request->validated());
 
         return IndexResource::collection($themes);
     }
 
-    public function show(Theme $theme)
+    public function show(Theme $theme): ShowResource
     {
         $theme->load('user:id,name,profile_picture_url', 'categories:id,name')
             ->loadCount(['reviews', 'favoritedBy', 'downloads']);
@@ -33,7 +36,7 @@ class ThemeController extends Controller
         return new ShowResource($theme);
     }
 
-    public function store(StoreThemeRequest $request)
+    public function store(StoreThemeRequest $request): JsonResponse
     {
         $theme = $this->themeService->createTheme(
             $request->validated(),
@@ -47,7 +50,7 @@ class ThemeController extends Controller
         ], 201);
     }
 
-    public function update(UpdateThemeRequest $request, Theme $theme)
+    public function update(UpdateThemeRequest $request, Theme $theme): Response
     {
       $this->themeService->updateTheme(
             $theme,
@@ -58,7 +61,7 @@ class ThemeController extends Controller
         return response()->noContent();
     }
 
-    public function destroy(DestroyThemeRequest $request, Theme $theme)
+    public function destroy(DestroyThemeRequest $request, Theme $theme): Response
     {
         $this->themeService->deleteTheme($theme);
 

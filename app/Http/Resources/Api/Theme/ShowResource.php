@@ -11,7 +11,7 @@ class ShowResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id' => $this->hash_id,
@@ -19,8 +19,8 @@ class ShowResource extends JsonResource
             'description' => $this->description,
             'layout_config' => $this->layout_config,
 
-            'images' => collect($this->images)->map(function($path){
-                return asset("storage/".$path);
+            'images' => collect($this->images)->map(function ($path) {
+                return asset("storage/" . $path);
             })->toArray(),
 
             'likes_count' => $this->favorited_by_count,
@@ -29,15 +29,13 @@ class ShowResource extends JsonResource
 
             'user' => [
                 'id' => $this->user->hash_id,
-                'name'=> $this->user->name,
+                'name' => $this->user->name,
                 'profile_picture_url' => $this->user->profile_picture_url
-                ? asset('storage/'.$this->user->profile_picture_url)
-                : null,
+                    ? asset('storage/' . $this->user->profile_picture_url)
+                    : null,
             ],
 
-            'categories' => [
-                'name' => $this->categories->pluck('name'),
-            ]
+            'categories' => $this->categories->pluck('name'),
         ];
     }
 }

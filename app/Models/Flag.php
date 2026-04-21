@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Review;
-use App\Models\Theme;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Flag extends Model
@@ -22,11 +20,11 @@ class Flag extends Model
         'status'
     ];
 
-    public function scopeAlreadyFlagged($query, $reporterId, $themeId, $userId, $reviewId)
+    public function scopeAlreadyFlagged($query, $userId, $themeId, $reportedUserId, $reviewId): Builder
     {
-        return $query->where('user_id', $reporterId)
+        return $query->where('user_id', $userId)
             ->when($themeId, fn($q) => $q->where('theme_id', $themeId))
-            ->when($userId, fn($q) => $q->where('user_id', $userId))
+            ->when($reportedUserId, fn($q) => $q->where('user_id', $reportedUserId))
             ->when($reviewId, fn($q) => $q->where('review_id', $reviewId));
     }
 

@@ -11,7 +11,7 @@ class IndexResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         $firstImage = !empty($this->images) ? $this->images[0] : null;
         return [
@@ -30,9 +30,7 @@ class IndexResource extends JsonResource
                     : null,
             ],
 
-            'categories' => [
-                'name' => $this->categories->pluck('name'),
-            ],
+            'categories' => $this->categories->pluck('name'),
 
         ];
     }

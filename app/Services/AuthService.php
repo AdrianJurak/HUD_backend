@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Mail;
 
 class AuthService
 {
-    public function register(array $data)
+    public function register(array $data): User
     {
         $data['password'] = Hash::make($data['password']);
         $data['verification_token'] = $this->createToken();
@@ -22,7 +22,7 @@ class AuthService
         return $user;
     }
 
-    public function login(array $data)
+    public function login(array $data): array
     {
         $user = User::where('email', $data['email'])->first();
 
