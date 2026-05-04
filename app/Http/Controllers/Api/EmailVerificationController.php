@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\EmailVerification\TokenRefreshRequest;
+use App\Http\Requests\EmailVerification\TokenCreateRequest;
 use App\Http\Requests\EmailVerification\VerifyEmailRequest;
 use App\Services\EmailVerificationService;
 use Illuminate\Http\JsonResponse;
@@ -20,9 +20,9 @@ class EmailVerificationController extends Controller
             'token' => $token]);
     }
 
-    public function tokenRefresh(TokenRefreshRequest $request): JsonResponse
+    public function tokenCreate(TokenCreateRequest $request): JsonResponse
     {
-        $this->emailVerificationService->tokenRefresh($request->validated());
+        $this->emailVerificationService->tokenCreate($request->validated());
 
         return response()->json(['message' => 'Verification code sent']);
     }

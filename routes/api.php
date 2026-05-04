@@ -16,7 +16,7 @@ Route::prefix('v1')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
 
     Route::post('verify', [EmailVerificationController::class, 'verifyEmail'])->middleware('throttle:5,1');
-    Route::post('token-refresh', [EmailVerificationController::class, 'tokenRefresh'])->middleware('throttle:5,1');
+    Route::post('token-create', [EmailVerificationController::class, 'tokenCreate'])->middleware('throttle:5,1');
 
     Route::post('generate-password-token', [PasswordResetController::class, 'passwordRecoveryToken'])->middleware('throttle:5,1');
     Route::post('password-change', [PasswordResetController::class, 'passwordChange'])->middleware('throttle:5,1');

@@ -4,7 +4,7 @@ namespace App\Http\Requests\EmailVerification;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TokenRefreshRequest extends FormRequest
+class TokenCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

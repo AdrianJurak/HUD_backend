@@ -27,7 +27,7 @@ class EmailVerificationService
         return $token;
     }
 
-    public function tokenRefresh(array $data): string
+    public function tokenCreate(array $data): string
     {
         $user = User::where('email', $data['email'])->first();
 
