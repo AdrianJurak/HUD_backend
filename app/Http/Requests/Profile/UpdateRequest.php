@@ -24,8 +24,8 @@ class UpdateRequest extends FormRequest
         return [
             'name' => 'sometimes|required|string|max:255',
             'profile_picture_url' => 'sometimes|image|mimes:jpeg,jpg,png,webp|max:4096',
-            'token' => 'sometimes|required_with:password|string|max:6',
-            'password' => 'sometimes|required_with:token|string|min:8|confirmed',
+            'verification_token' => 'required_with:password|string|max:6',
+            'password' => 'required_with:verification_token|string|min:8|confirmed',
         ];
     }
 }

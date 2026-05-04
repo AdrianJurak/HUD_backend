@@ -5,7 +5,6 @@ namespace App\Services;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use function Laravel\Prompts\password;
 
 class ProfileService
 {
@@ -27,7 +26,9 @@ class ProfileService
             $user->profile_picture_url = $path;
         }
 
-        $this->changePassword($user, $validatedData['token'], $validatedData['password']);
+        if(isset($validatedData['verification_token'], $validatedData['password'])){
+            $this->changePassword($user, $validatedData['verification_token'], $validatedData['password']);
+        }
 
         $user->save();
     }
@@ -36,7 +37,7 @@ class ProfileService
     {
         if (!hash_equals((string)$user->verification_token, $token)) {
             throw ValidationException::withMessages([
-                ['token' => ['The provided token is invalid.']],
+                'verification_token' => 'The token is invalid.'
             ]);
         }
 
