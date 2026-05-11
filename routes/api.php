@@ -16,39 +16,44 @@ Route::prefix('v1')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
 
     Route::post('verify', [EmailVerificationController::class, 'verifyEmail'])->middleware('throttle:5,1');
-    Route::post('token-refresh', [EmailVerificationController::class, 'tokenRefresh'])->middleware('throttle:5,1');
+    Route::post('token-create', [EmailVerificationController::class, 'tokenCreate'])->middleware('throttle:5,1');
 
     Route::post('generate-password-token', [PasswordResetController::class, 'passwordRecoveryToken'])->middleware('throttle:5,1');
     Route::post('password-change', [PasswordResetController::class, 'passwordChange'])->middleware('throttle:5,1');
 
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
-    Route::get('themes', [ThemeController::class, 'index']);
-    Route::get('themes/{theme}', [ThemeController::class, 'show']);
 
-    Route::get('themes/{theme}/reviews', [ReviewController::class, 'index']);
+    Route::middleware('throttle:60,1')->group(function () {
+        Route::get('themes', [ThemeController::class, 'index']);
+        Route::get('themes/{theme}', [ThemeController::class, 'show']);
 
-    Route::get('categories', [CategoryController::class, 'index']);
+        Route::get('themes/{theme}/reviews', [ReviewController::class, 'index']);
 
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('logout', [AuthController::class, 'logout']);
+        Route::get('categories', [CategoryController::class, 'index']);
 
-        Route::get('user', [ProfileController::class, 'show']);
-        Route::put('profile', [ProfileController::class, 'update']);
-        Route::delete('profile', [ProfileController::class, 'destroy']);
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::post('logout', [AuthController::class, 'logout']);
 
-        Route::post('themes/{theme}/reviews', [ReviewController::class, 'store']);
-        Route::delete('themes/{theme}/reviews/{review}', [ReviewController::class, 'destroy']);
+            Route::get('user', [ProfileController::class, 'show']);
+            Route::put('profile', [ProfileController::class, 'update']);
+            Route::delete('profile', [ProfileController::class, 'destroy']);
 
-        Route::post('themes/{theme}/download', DownloadController::class);
+            Route::post('themes/{theme}/reviews', [ReviewController::class, 'store']);
+            Route::delete('themes/{theme}/reviews/{review}', [ReviewController::class, 'destroy']);
 
-        Route::post('flags', [FlagController::class, 'store']);
+            Route::post('themes/{theme}/download', DownloadController::class);
 
-        Route::post('themes', [ThemeController::class, 'store']);
-        Route::put('themes/{theme}', [ThemeController::class, 'update']);
-        Route::delete('themes/{theme}', [ThemeController::class, 'destroy']);
+            Route::post('flags', [FlagController::class, 'store']);
 
-        Route::post('themes/{theme}/favorite', [ThemeFavoriteController::class, 'toggle']);
+            Route::post('themes', [ThemeController::class, 'store']);
+            Route::put('themes/{theme}', [ThemeController::class, 'update']);
+            Route::delete('themes/{theme}', [ThemeController::class, 'destroy']);
+
+            Route::post('themes/{theme}/favorite', [ThemeFavoriteController::class, 'toggle']);
+        });
     });
+
+
 
 });

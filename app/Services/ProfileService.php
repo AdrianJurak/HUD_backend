@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class ProfileService
 {
@@ -24,7 +26,24 @@ class ProfileService
             $user->profile_picture_url = $path;
         }
 
+        if(isset($validatedData['verification_token'], $validatedData['password'])){
+            $this->changePassword($user, $validatedData['verification_token'], $validatedData['password']);
+        }
+
         $user->save();
+    }
+
+    private function changePassword($user, string $token, string $password): void
+    {
+        if (!hash_equals((string)$user->verification_token, $token)) {
+            throw ValidationException::withMessages([
+                'verification_token' => 'The token is invalid.'
+            ]);
+        }
+
+        $user->password = Hash::make($password);
+        $user->verification_token = null;
+        $user->verification_token_expires_at = null;
     }
 
     public function delete(): void

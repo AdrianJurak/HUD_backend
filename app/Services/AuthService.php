@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\VerificationCodeMail;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -24,11 +25,11 @@ class AuthService
 
     public function login(array $data): array
     {
-        $user = User::where('email', $data['email'])->first();
-
-        if (!$user || !Hash::check($data['password'], $user->password)) {
+        if (!Auth::attempt(['email' => $data['email'], 'password' => $data['password']])) {
             abort(401,'Your credentials are incorrect');
         }
+
+        $user = Auth::user();
 
         if ($user->email_verified_at == null) {
             abort(400,'Email is not verified.');
