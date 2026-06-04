@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Mail\VerificationCodeMail;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class PasswordResetService
@@ -17,14 +19,23 @@ class PasswordResetService
         abort_if($user->email_verified_at === null, 400, 'Email is unverified.');
         abort_if($user->verification_token_expires_at > now(), 400, 'Previous token is still valid');
 
-        $token = User::generateVerificationToken();
+        try{
+            DB::transaction(function () use ($validatedData, &$user) {
 
-        $user->update([
-            'verification_token' => $token,
-            'verification_token_expires_at' => now()->addMinutes(10),
-        ]);
 
-        Mail::to($user->email)->send(new VerificationCodeMail($token));
+                $token = User::generateVerificationToken();
+
+                $user->update([
+                    'verification_token' => $token,
+                    'verification_token_expires_at' => now()->addMinutes(10),
+                ]);
+
+                Mail::to($user->email)->send(new VerificationCodeMail($token));
+            });
+        }catch(\Throwable $th){
+            Log::error('Password reset transaction failed: ' . $th->getMessage());
+            abort(500, 'Wystąpił błąd podczas resetu hasła. Spróbuj ponownie.');
+        }
     }
 
     public function passwordChange(array $validatedData): void

@@ -2,29 +2,52 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileService
 {
     public function update(array $validatedData): void
     {
-        $user = auth()->user();
+        $uploadedFile = null;
+        $oldPicture = null;
 
-        if (isset($validatedData['name'])) {
-            $user->name = $validatedData['name'];
-        }
+        try{
+            DB::transaction(function () use ($validatedData, &$uploadedFile, &$oldPicture){
+                $user = auth()->user();
 
-        if (isset($validatedData['profile_picture_url'])) {
-            if ($user->profile_picture_url) {
-                Storage::disk('public')->delete($user->profile_picture_url);
+                if (isset($validatedData['name'])) {
+                    $user->name = $validatedData['name'];
+                }
+
+                if (isset($validatedData['profile_picture_url'])) {
+                    if ($user->profile_picture_url) {
+                        $oldPicture = $user->profile_picture_url;
+                    }
+
+                    $path = $validatedData['profile_picture_url']->store('profile_pictures', 'public');
+
+                    $uploadedFile = $path;
+
+                    $user->profile_picture_url = $path;
+                }
+
+                $user->save();
+            });
+
+            if($oldPicture){
+                Storage::disk('public')->delete($oldPicture);
             }
 
-            $path = $validatedData['profile_picture_url']->store('profile_pictures', 'public');
+        }catch(\Throwable $th){
+            if($uploadedFile){
+                Storage::disk('public')->delete($uploadedFile);
+            }
 
-            $user->profile_picture_url = $path;
+            Log::error('Profile update transaction failed: ' . $th->getMessage());
+            abort(500, 'Wystąpił błąd. Spróbuj ponownie.');
         }
-
-        $user->save();
     }
 
     public function delete(): void
