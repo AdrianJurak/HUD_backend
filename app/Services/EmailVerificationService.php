@@ -29,21 +29,22 @@ class EmailVerificationService
         return $token;
     }
 
-    public function tokenRefresh(array $data): string
+    public function tokenCreate(array $data): string
     {
+        $MINUTES_TO_EXPIRE = 10;
+
         $user = User::where('email', $data['email'])->first();
 
         abort_if(!$user, 404, 'User not found');
-        abort_if($user->verification_token_expires_at > now(), 400, 'Current code is still valid try again later');
+        abort_if($user->verification_token_expires_at > now()->addMinutes($MINUTES_TO_EXPIRE-1), 400, 'Current code is still valid try again later');
 
         try{
             return DB::transaction(function () use ($data, &$user) {
                 $token = User::generateVerificationToken();
 
-
                 $user->update([
                     'verification_token' => $token,
-                    'verification_token_expires_at' => now()->addMinutes(10),
+                    'verification_token_expires_at' => now()->addMinutes($MINUTES_TO_EXPIRE)),
                 ]);
 
                 Mail::to($user->email)->send(new VerificationCodeMail($token));

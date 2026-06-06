@@ -43,7 +43,7 @@ class PasswordResetService
         $user = User::where('email', $validatedData['email'])->first();
 
         abort_if(!$user, 404, 'User not found.');
-        abort_if($validatedData['verification_token'] !== $user->verification_token,400,'Invalid verification code.');
+        abort_if(!hash_equals((string)$user->verification_token, (string) $validatedData['verification_token']),400,'Invalid verification code.');
         abort_if($user->verification_token_expires_at < now() || $user->verification_token_expires_at == null,400,'Previous verification code is expired.');
 
         $user->update([

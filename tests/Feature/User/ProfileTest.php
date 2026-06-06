@@ -97,6 +97,97 @@ class ProfileTest extends TestCase
         Storage::disk('public')->assertExists($freshUser->profile_picture_url);
     }
 
+    public function test_user_can_update_their_profile_password(): void
+    {
+        $user = User::factory()->create([
+            'name' => 'Example User',
+            'email' => 'example@user.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+            'verification_token' => 123456,
+            'verification_token_expires_at' => now()->addMinutes(10),
+        ]);
+
+        $payload = [
+            'password' => 'different-password',
+            'password_confirmation' => 'different-password',
+            'verification_token' => '123456',
+        ];
+
+        $response = $this->actingAs($user)->putJson('/api/v1/profile', $payload);
+
+        $response->assertStatus(200);
+
+        $freshUser = $user->fresh();
+
+        $this->assertTrue(Hash::check($payload['password'], $freshUser->password));
+
+        $this->assertNull($freshUser->verification_token);
+
+        $this->assertNull($freshUser->verification_token_expires_at);
+    }
+
+    #[DataProvider('invalidFieldProvider')]
+    public function test_user_cannot_update_their_profile_password_with_invalid_data($payload, $invalidField): void
+    {
+        $user = User::factory()->create([
+            'name' => 'Example User',
+            'email' => 'example@user.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+            'verification_token' => 123456,
+            'verification_token_expires_at' => now()->addMinutes(10),
+        ]);
+
+        $response = $this->actingAs($user)->putJson('/api/v1/profile', $payload);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors([$invalidField]);
+    }
+
+    public static function invalidFieldProvider(): array
+    {
+        return [
+            'Incorrect token' => [
+                [
+                    'password' => 'different-password',
+                    'password_confirmation' => 'different-password',
+                    'verification_token' => '412341',
+                ],
+                'verification_token'
+            ],
+            'Incorrect password confirmation' => [
+                [
+                    'password' => 'different-password',
+                    'password_confirmation' => 'random password',
+                    'verification_token' => '123456',
+                ],
+                'password'
+            ],
+            'Missing token' => [
+                [
+                    'password' => 'different-password',
+                    'password_confirmation' => 'different-password',
+                ],
+                'verification_token'
+            ],
+            'Missing password' => [
+                [
+                    'password_confirmation' => 'different-password',
+                    'verification_token' => '123456',
+                ],
+                'password'
+            ],
+            'Missing password confirmation' => [
+                [
+                    'password' => 'different-password',
+                    'verification_token' => '123456',
+                ],
+                'password'
+            ],
+        ];
+    }
+
     #[DataProvider('incorrectFiles')]
     public function test_user_cannot_update_their_profile_with_incorrect_file_format_or_incorrect_size($filename, $size, $mimeType): void
     {

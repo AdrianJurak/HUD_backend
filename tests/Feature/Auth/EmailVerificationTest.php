@@ -155,7 +155,7 @@ class EmailVerificationTest extends TestCase
             'email' => $user->email,
         ];
 
-        $response = $this->postJson('/api/v1/token-refresh', $payload);
+        $response = $this->postJson('/api/v1/token-create', $payload);
 
         $response->assertStatus(200);
         $response->assertJson(['message' => 'Verification code sent']);
@@ -173,7 +173,7 @@ class EmailVerificationTest extends TestCase
 
     public function test_verification_token_refresh_validation_fails(): void
     {
-        $response = $this->postJson('/api/v1/token-refresh', []);
+        $response = $this->postJson('/api/v1/token-create', []);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['email']);
@@ -194,7 +194,7 @@ class EmailVerificationTest extends TestCase
             'email' => 'test@email.com',
         ];
 
-        $response = $this->postJson('/api/v1/token-refresh', $payload);
+        $response = $this->postJson('/api/v1/token-create', $payload);
 
         $response->assertStatus(404);
         $response->assertJson(['message' => 'User not found']);
@@ -214,7 +214,7 @@ class EmailVerificationTest extends TestCase
             'email' => $user->email,
         ];
 
-        $response = $this->postJson('/api/v1/token-refresh', $payload);
+        $response = $this->postJson('/api/v1/token-create', $payload);
 
         $response->assertStatus(400);
         $response->assertJson(['message' => 'Current code is still valid try again later']);
