@@ -28,10 +28,10 @@
           }
         },
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/register",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/register",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -65,10 +65,10 @@
           }
         },
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/verify",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/verify",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -104,10 +104,10 @@
           ]
         },
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/token-refresh",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/token-refresh",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -154,10 +154,10 @@
           ]
         },
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/generate-password-token",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/generate-password-token",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -217,10 +217,10 @@
           ]
         },
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/password-change",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/password-change",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -264,10 +264,10 @@
           }
         },
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/login",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/login",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -302,10 +302,10 @@
           }
         ],
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/user",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/user",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -340,10 +340,10 @@
           }
         ],
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/logout",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/logout",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -378,10 +378,10 @@
           }
         ],
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/profile",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/profile",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -416,10 +416,10 @@
           }
         ],
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/themes",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/themes",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -454,10 +454,10 @@
           }
         ],
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/themes/{theme_id}",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/themes/{theme_id}",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -559,10 +559,10 @@
           ]
         },
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/themes",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/themes",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -663,10 +663,10 @@
           ]
         },
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/themes/{theme_id}",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/themes/{theme_id}",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -702,10 +702,10 @@
           }
         ],
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/themes/{theme_id}",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/themes/{theme_id}",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -741,10 +741,10 @@
           }
         ],
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/themes/{theme_id}/downloads",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/themes/{theme_id}/downloads",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -781,10 +781,10 @@
           }
         ],
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/themes/{theme_id}/favorite",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/themes/{theme_id}/favorite",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -821,10 +821,10 @@
           }
         ],
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/themes/{theme_id}/reviews",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/themes/{theme_id}/reviews",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -870,10 +870,10 @@
           }
         },
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/themes/{theme_id}/reviews",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/themes/{theme_id}/reviews",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -900,10 +900,10 @@
           }
         ],
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/themes/{theme_id}/reviews/{review_id}",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/themes/{theme_id}/reviews/{review_id}",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -960,10 +960,10 @@
           ]
         },
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/profile",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/profile",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -988,10 +988,10 @@
           }
         ],
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/categories",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/categories",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],
@@ -1058,10 +1058,10 @@
           ]
         },
         "url": {
-          "raw": "https://hud-backend-qcoc.onrender.com/api/v1/flags",
+          "raw": "https://hud-backend-i7vx.onrender.com/api/v1/flags",
           "protocol": "https",
           "host": [
-            "hud-backend-qcoc",
+            "hud-backend-i7vx",
             "onrender",
             "com"
           ],

@@ -6,7 +6,7 @@ A robust RESTful API built with **Laravel**, serving as the backend for a custom
 
 The application is fully containerized (Docker) and deployed on Render. You can explore the Filament-based Admin Dashboard here:
 
-* **URL:** https://hud-backend-qcoc.onrender.com/admin
+* **URL:** https://hud-backend-i7vx.onrender.com/admin
 * **Login:** `admin@admin.com`
 * **Password:** `password`
 
