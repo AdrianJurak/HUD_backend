@@ -37,7 +37,7 @@ class ThemePolicy
      */
     public function update(User $user, Theme $theme): bool
     {
-        return $user->id === $theme->user_id;
+        return $user->id === $theme->user_id || $user->role === 'admin';
     }
 
     /**

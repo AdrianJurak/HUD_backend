@@ -10,6 +10,7 @@ use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -30,16 +31,15 @@ class ThemeResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('user_id')
+                    ->label('User Id')
                     ->numeric(),
                 Forms\Components\TextInput::make('title')
+                    ->label('Title')
                     ->required()
                     ->maxLength(100),
                 Forms\Components\Textarea::make('description')
+                    ->label('Description')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('likes')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
                 Builder::make('layout_config')
                     ->label('Theme Layout')
                     ->blocks([
@@ -90,9 +90,9 @@ class ThemeResource extends Resource
                     ->label('Theme Images')
                     ->image()
                     ->multiple()
-                    ->directory('theme-images')
+                    ->directory('theme_images')
                     ->maxFiles(5)
-                    ->reorederable()
+                    ->reorderable()
                     ->columnSpanFull(),
             ]);
     }
@@ -102,17 +102,21 @@ class ThemeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label('Title')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Author')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('likes')
+                Tables\Columns\TextColumn::make('favorited_by_count')
+                    ->counts('favoritedBy')
+                    ->label('Likes')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('downloads_count')
-                    ->counts('download')
+                    ->label('Downloads')
+                    ->counts('downloads')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -120,6 +124,7 @@ class ThemeResource extends Resource
                     ->sortable()
                     ->label('Added at'),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Updated at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Mail\VerificationCodeMail;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 class EmailVerificationService
 {
@@ -36,15 +38,23 @@ class EmailVerificationService
         abort_if(!$user, 404, 'User not found');
         abort_if($user->verification_token_expires_at > now()->addMinutes($MINUTES_TO_EXPIRE-1), 400, 'Current code is still valid try again later');
 
-        $token = User::generateVerificationToken();
+        try{
+            return DB::transaction(function () use ($data, &$user) {
+                $token = User::generateVerificationToken();
 
-        $user->update([
-            'verification_token' => $token,
-            'verification_token_expires_at' => now()->addMinutes($MINUTES_TO_EXPIRE),
-        ]);
+                $user->update([
+                    'verification_token' => $token,
+                    'verification_token_expires_at' => now()->addMinutes($MINUTES_TO_EXPIRE)),
+                ]);
 
-        Mail::to($user->email)->send(new VerificationCodeMail($token));
+                Mail::to($user->email)->send(new VerificationCodeMail($token));
 
-        return $token;
+                return $token;
+            });
+        }catch(\Throwable $th){
+            Log::error('Verification transaction failed: ' . $th->getMessage());
+            abort(500, 'Wystąpił błąd podczas rejestracji. Spróbuj ponownie.');
+        }
+
     }
 }

@@ -23,15 +23,19 @@ class DatabaseSeeder extends Seeder
 //
 //         Category::factory(10)->create();
 
-        $admin = User::create([
+        User::firstOrCreate(
+            ['email' => 'test@example.com']
+            , [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
         ]);
 
-        User::create([
-            'name' => 'Adrian Admin',
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@admin.com']
+            , [
+            'name' => 'Admin',
             'email' => 'admin@admin.com',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
@@ -50,16 +54,38 @@ class DatabaseSeeder extends Seeder
             'user_id' => $admin->id,
             'title' => 'Sportowy HUD (Czerwony Akcent)',
             'description' => 'Motyw z centralnym obrotomierzem i dużym wskaźnikiem doładowania turbo. Idealny do dynamicznej jazdy.',
-            'layout_config' => json_encode(['position' => 'center', 'color_scheme' => 'red', 'widgets' => ['rpm', 'boost', 'speed']]),
-            'images' => json_encode(['preview1.jpg', 'preview2.jpg']),
+            'layout_config' => [
+                [
+                    'type' => 'speedometer',
+                    'data' => [
+                        'x' => 100,
+                        'y' => 100,
+                        'size' => 50,
+                        'color' => '#32cd32',
+                        'style' => 'digital'
+                    ]
+                ]
+            ],
+            'images' => (['preview1.jpg', 'preview2.jpg']),
         ]);
 
         Theme::create([
             'user_id' => $admin->id,
             'title' => 'Minimalistyczna Telemetria',
             'description' => 'Czysty interfejs skupiony wyłącznie na ekonomii spalania i temperaturze płynów.',
-            'layout_config' => json_encode(['position' => 'bottom', 'color_scheme' => 'blue', 'widgets' => ['temp', 'fuel', 'speed']]),
-            'images' => json_encode([]),
+            'layout_config' => [
+                [
+                    'type' => 'speedometer',
+                    'data' => [
+                        'x' => 100,
+                        'y' => 100,
+                        'size' => 50,
+                        'color' => '#32cd32',
+                        'style' => 'digital'
+                    ]
+                ]
+            ],
+            'images' => ([]),
         ]);
     }
 }

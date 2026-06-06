@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -10,27 +12,49 @@ class ProfileService
 {
     public function update(array $validatedData): void
     {
+        $uploadedFile = null;
+        $oldPicture = null;
+      
         $user = auth()->user();
-
-        if (isset($validatedData['name'])) {
-            $user->name = $validatedData['name'];
+      
+        if(isset($validatedData['verification_token'], $validatedData['password'])){
+           $this->changePassword($user, $validatedData['verification_token'], $validatedData['password']);
         }
 
-        if (isset($validatedData['profile_picture_url'])) {
-            if ($user->profile_picture_url) {
-                Storage::disk('public')->delete($user->profile_picture_url);
+        try{
+            DB::transaction(function () use ($user,$validatedData, &$uploadedFile, &$oldPicture){
+                
+
+                if (isset($validatedData['name'])) {
+                    $user->name = $validatedData['name'];
+                }
+
+                if (isset($validatedData['profile_picture_url'])) {
+                    if ($user->profile_picture_url) {
+                        $oldPicture = $user->profile_picture_url;
+                    }
+
+                    $path = $validatedData['profile_picture_url']->store('profile_pictures', 'public');
+
+                    $uploadedFile = $path;
+
+                    $user->profile_picture_url = $path;
+                }
+                $user->save();
+            });
+
+            if($oldPicture){
+                Storage::disk('public')->delete($oldPicture);
             }
 
-            $path = $validatedData['profile_picture_url']->store('profile_pictures', 'public');
+        }catch(\Throwable $th){
+            if($uploadedFile){
+                Storage::disk('public')->delete($uploadedFile);
+            }
 
-            $user->profile_picture_url = $path;
+            Log::error('Profile update transaction failed: ' . $th->getMessage());
+            abort(500, 'Wystąpił błąd. Spróbuj ponownie.');
         }
-
-        if(isset($validatedData['verification_token'], $validatedData['password'])){
-            $this->changePassword($user, $validatedData['verification_token'], $validatedData['password']);
-        }
-
-        $user->save();
     }
 
     private function changePassword($user, string $token, string $password): void

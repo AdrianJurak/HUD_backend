@@ -4,8 +4,10 @@ namespace App\Services;
 
 use App\Mail\VerificationCodeMail;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class AuthService
@@ -15,12 +17,19 @@ class AuthService
         $data['password'] = Hash::make($data['password']);
         $data['verification_token'] = $this->createToken();
         $data['verification_token_expires_at'] = now()->addMinutes(10);
+        try{
+            return DB::transaction(function () use ($data) {
+                $user = User::create($data);
 
-        $user = User::create($data);
+                Mail::to($user->email)->queue(new VerificationCodeMail($data['verification_token']));
 
-        Mail::to($user->email)->queue(new VerificationCodeMail($data['verification_token']));
+                return $user;
+            });
+        }catch(\Throwable $th){
+            Log::error('Registration transaction failed: ' . $th->getMessage());
+            abort(500, 'Wystąpił błąd podczas rejestracji. Spróbuj ponownie.');
+        }
 
-        return $user;
     }
 
     public function login(array $data): array

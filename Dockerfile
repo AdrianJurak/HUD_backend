@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install pdo pdo_pgsql zip intl
+    && docker-php-ext-install pdo pdo_pgsql zip intl bcmath
 
 RUN a2enmod rewrite
 
