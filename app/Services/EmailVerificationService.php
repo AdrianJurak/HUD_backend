@@ -39,12 +39,12 @@ class EmailVerificationService
         abort_if($user->verification_token_expires_at > now()->addMinutes($MINUTES_TO_EXPIRE-1), 400, 'Current code is still valid try again later');
 
         try{
-            return DB::transaction(function () use ($data, &$user) {
+            return DB::transaction(function () use ($data, &$user,$MINUTES_TO_EXPIRE) {
                 $token = User::generateVerificationToken();
 
                 $user->update([
                     'verification_token' => $token,
-                    'verification_token_expires_at' => now()->addMinutes($MINUTES_TO_EXPIRE)),
+                    'verification_token_expires_at' => now()->addMinutes($MINUTES_TO_EXPIRE),
                 ]);
 
                 Mail::to($user->email)->send(new VerificationCodeMail($token));

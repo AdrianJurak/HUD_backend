@@ -207,7 +207,7 @@ class EmailVerificationTest extends TestCase
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
             'verification_token'=> '123456',
-            'verification_token_expires_at' => now()->addSeconds(30),
+            'verification_token_expires_at' => now()->addMinutes(10),
         ]);
 
         $payload = [
