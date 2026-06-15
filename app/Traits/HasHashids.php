@@ -6,20 +6,23 @@ use Vinkla\Hashids\Facades\Hashids;
 
 trait HasHashids
 {
-    public function getHashIdAttribute()
+    public function getHashIdAttribute(): string
     {
         return Hashids::connection($this->getTable())->encode($this->id);
     }
+
     public static function decodeId($hash)
     {
         $tableName = (new static)->getTable();
 
         $decoded = Hashids::connection($tableName)->decode($hash);
+
         return $decoded[0] ?? null;
     }
+
     public static function encodeId($id)
     {
-        if (!$id) {
+        if (! $id) {
             return null;
         }
 

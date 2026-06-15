@@ -11,12 +11,11 @@ class Category extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name'
+        'name',
     ];
 
     public function themes(): BelongsToMany
     {
         return $this->belongsToMany(Theme::class, 'category_theme', 'category_id', 'theme_id');
     }
-
 }

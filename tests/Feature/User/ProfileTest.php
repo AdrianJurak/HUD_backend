@@ -4,10 +4,9 @@ namespace Tests\Feature\User;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\UploadedFile;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -34,7 +33,7 @@ class ProfileTest extends TestCase
                 'name' => $user->name,
                 'email' => $user->email,
                 'profile_picture_url' => null,
-            ]
+            ],
         ]);
     }
 
@@ -58,7 +57,7 @@ class ProfileTest extends TestCase
                 'name' => $user->name,
                 'email' => $user->email,
                 'profile_picture_url' => asset('storage/avatars/my-cool-avatar.jpg'),
-            ]
+            ],
         ]);
     }
 
@@ -154,7 +153,7 @@ class ProfileTest extends TestCase
                     'password_confirmation' => 'different-password',
                     'verification_token' => '412341',
                 ],
-                'verification_token'
+                'verification_token',
             ],
             'Incorrect password confirmation' => [
                 [
@@ -162,28 +161,28 @@ class ProfileTest extends TestCase
                     'password_confirmation' => 'random password',
                     'verification_token' => '123456',
                 ],
-                'password'
+                'password',
             ],
             'Missing token' => [
                 [
                     'password' => 'different-password',
                     'password_confirmation' => 'different-password',
                 ],
-                'verification_token'
+                'verification_token',
             ],
             'Missing password' => [
                 [
                     'password_confirmation' => 'different-password',
                     'verification_token' => '123456',
                 ],
-                'password'
+                'password',
             ],
             'Missing password confirmation' => [
                 [
                     'password' => 'different-password',
                     'verification_token' => '123456',
                 ],
-                'password'
+                'password',
             ],
         ];
     }
@@ -203,7 +202,7 @@ class ProfileTest extends TestCase
         ]);
 
         $payload = [
-            'profile_picture_url' => $badFile
+            'profile_picture_url' => $badFile,
         ];
 
         $response = $this->actingAs($user)->putJson('/api/v1/profile', $payload);
@@ -219,12 +218,12 @@ class ProfileTest extends TestCase
             'Wrong Format' => [
                 'document.pdf',
                 100,
-                'application/pdf'
+                'application/pdf',
             ],
             'File too big' => [
                 'huge_avatar.jpg',
                 5000,
-                'image/jpeg'
+                'image/jpeg',
             ],
         ];
     }

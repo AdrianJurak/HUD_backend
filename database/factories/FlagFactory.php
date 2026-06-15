@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Flag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Flag>
+ * @extends Factory<Flag>
  */
 class FlagFactory extends Factory
 {
@@ -17,6 +18,7 @@ class FlagFactory extends Factory
     public function definition(): array
     {
         $createdAt = $this->faker->dateTimeBetween('-1 year', 'now');
+
         return [
             'user_id' => null,
             'theme_id' => null,

@@ -25,7 +25,7 @@ class User extends Authenticatable implements FilamentUser
         'role',
         'is_banned',
         'verification_token',
-        'verification_token_expires_at'
+        'verification_token_expires_at',
     ];
 
     protected $hidden = [

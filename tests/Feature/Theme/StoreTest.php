@@ -5,8 +5,8 @@ namespace Tests\Feature\Theme;
 use App\Models\Category;
 use App\Models\Theme;
 use App\Models\User;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -26,7 +26,7 @@ class StoreTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()->subSeconds(10)
+            'email_verified_at' => now()->subSeconds(10),
         ]);
     }
 
@@ -44,9 +44,9 @@ class StoreTest extends TestCase
         $payload = [
             'title' => 'Example Title',
             'description' => 'Example Description',
-            'layout_config' => ['Type'=>'Speedometer','Size'=>'Small'],
+            'layout_config' => ['Type' => 'Speedometer', 'Size' => 'Small'],
             'images' => $files,
-            'categories' => [$dark->id]
+            'categories' => [$dark->id],
         ];
 
         $response = $this->actingAs($this->user)->postJson('/api/v1/themes', $payload);
@@ -81,7 +81,7 @@ class StoreTest extends TestCase
     {
         $response = $this->postJson('/api/v1/themes', [
             'title' => 'Sneaky Theme',
-            'layout_config' => ['Type' => 'Basic']
+            'layout_config' => ['Type' => 'Basic'],
         ]);
 
         $response->assertStatus(401);
@@ -101,14 +101,14 @@ class StoreTest extends TestCase
     {
         return [
             'Missing title' => [
-                ['layout_config'=>['Type'=>'Speedometer','Size'=>'Small']],
-                'title'
+                ['layout_config' => ['Type' => 'Speedometer', 'Size' => 'Small']],
+                'title',
             ],
             'Missing layout_config' => [
-                ['title'=>'Test Title'],
-                'layout_config'
+                ['title' => 'Test Title'],
+                'layout_config',
 
-            ]
+            ],
         ];
     }
 
@@ -121,7 +121,7 @@ class StoreTest extends TestCase
 
         $payload = [
             'title' => 'Theme with too many images',
-            'layout_config' => ['Type'=>'Speedometer','Size'=>'Small'],
+            'layout_config' => ['Type' => 'Speedometer', 'Size' => 'Small'],
             'images' => $files,
         ];
 
@@ -139,7 +139,7 @@ class StoreTest extends TestCase
 
         $payload = [
             'title' => 'Theme with too many images',
-            'layout_config' => ['Type'=>'Speedometer','Size'=>'Small'],
+            'layout_config' => ['Type' => 'Speedometer', 'Size' => 'Small'],
             'images' => [$invalidFile],
         ];
 
@@ -154,12 +154,12 @@ class StoreTest extends TestCase
             'Wrong Format' => [
                 'document.pdf',
                 100,
-                'application/pdf'
+                'application/pdf',
             ],
             'File too big' => [
                 'huge_avatar.jpg',
                 9000,
-                'image/jpeg'
+                'image/jpeg',
             ],
         ];
     }

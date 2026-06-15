@@ -1,18 +1,18 @@
 <?php
 
-use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\DownloadController;
+use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\FlagController;
+use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\ThemeController;
-use App\Http\Controllers\Api\DownloadController;
 use App\Http\Controllers\Api\ThemeFavoriteController;
-use App\Http\Controllers\Api\EmailVerificationController;
-use App\Http\Controllers\Api\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->middleware('isBanned')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
 
     Route::post('verify', [EmailVerificationController::class, 'verifyEmail'])->middleware('throttle:5,1');
@@ -22,7 +22,6 @@ Route::prefix('v1')->group(function () {
     Route::post('password-change', [PasswordResetController::class, 'passwordChange'])->middleware('throttle:5,1');
 
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
-
 
     Route::middleware('throttle:60,1')->group(function () {
         Route::get('themes', [ThemeController::class, 'index']);
@@ -53,7 +52,5 @@ Route::prefix('v1')->group(function () {
             Route::post('themes/{theme}/favorite', [ThemeFavoriteController::class, 'toggle']);
         });
     });
-
-
 
 });

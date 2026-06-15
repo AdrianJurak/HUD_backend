@@ -20,7 +20,7 @@ class ShowResource extends JsonResource
             'layout_config' => $this->layout_config,
 
             'images' => collect($this->images)->map(function ($path) {
-                return asset("storage/" . $path);
+                return asset('storage/'.$path);
             })->toArray(),
 
             'likes_count' => $this->favorited_by_count,
@@ -31,7 +31,7 @@ class ShowResource extends JsonResource
                 'id' => $this->user->hash_id,
                 'name' => $this->user->name,
                 'profile_picture_url' => $this->user->profile_picture_url
-                    ? asset('storage/' . $this->user->profile_picture_url)
+                    ? asset('storage/'.$this->user->profile_picture_url)
                     : null,
             ],
 

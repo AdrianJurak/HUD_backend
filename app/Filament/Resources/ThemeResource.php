@@ -3,22 +3,19 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ThemeResource\Pages;
-use App\Filament\Resources\ThemeResource\RelationManagers;
 use App\Models\Theme;
 use Filament\Forms;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\Section;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Forms\Components\FileUpload;
-
 
 class ThemeResource extends Resource
 {
@@ -30,10 +27,10 @@ class ThemeResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
+                TextInput::make('user_id')
                     ->label('User Id')
                     ->numeric(),
-                Forms\Components\TextInput::make('title')
+                TextInput::make('title')
                     ->label('Title')
                     ->required()
                     ->maxLength(100),
@@ -50,9 +47,9 @@ class ThemeResource extends Resource
                                 TextInput::make('size')->numeric()->default(50)->label('Font size')->required(),
                                 ColorPicker::make('color')->default('#32cd32'),
                                 Select::make('style')->options([
-                                    'digital'=>'Digital',
-                                    'gauge'=>'Gauge',
-                                    'bar'=>'Bar',
+                                    'digital' => 'Digital',
+                                    'gauge' => 'Gauge',
+                                    'bar' => 'Bar',
                                 ])->default('digital'),
                             ])->icon('heroicon-m-bolt'),
 
@@ -63,9 +60,9 @@ class ThemeResource extends Resource
                                 TextInput::make('size')->numeric()->default(50)->label('Font Size')->required(),
                                 ColorPicker::make('color')->default('#32cd32'),
                                 Select::make('style')->options([
-                                    'digital'=>'Digital',
-                                    'gauge'=>'Gauge',
-                                    'bar'=>'Bar',
+                                    'digital' => 'Digital',
+                                    'gauge' => 'Gauge',
+                                    'bar' => 'Bar',
                                 ])->default('digital'),
                                 TextInput::make('max_rpm')->numeric()->default(7000)->label('Max RPM')->required(),
                                 Checkbox::make('redline')->label('Show redline?')->default(true),
@@ -79,12 +76,12 @@ class ThemeResource extends Resource
                                 ColorPicker::make('color')->default('#32cd32'),
                                 Select::make('type')
                                     ->options([
-                                        'clock'=>'Clock',
-                                        'fuel'=>'Fuel',
-                                        'water_temperature'=>'Water Temperature',
-                                        'oil_temperature'=>'Oil Temperature',
+                                        'clock' => 'Clock',
+                                        'fuel' => 'Fuel',
+                                        'water_temperature' => 'Water Temperature',
+                                        'oil_temperature' => 'Oil Temperature',
                                     ])->default('water_temperature'),
-                            ])->icon('heroicon-m-clock')
+                            ])->icon('heroicon-m-clock'),
                     ])->columnSpanFull(),
                 FileUpload::make('images')
                     ->label('Theme Images')

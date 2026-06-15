@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Theme;
 
 use App\Models\Theme;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreThemeRequest extends FormRequest
@@ -18,14 +19,14 @@ class StoreThemeRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'layout_config' => 'required|array',
+            'layout_config' => 'required|array|max:100',
             'images' => 'nullable|array|max:5',
             'images.*' => 'file|image|mimes:jpeg,png,jpg,gif|max:8192',
             'categories' => 'array',

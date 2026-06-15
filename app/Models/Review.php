@@ -11,34 +11,38 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Review extends Model
 {
     use HasFactory, HasHashids;
+
     protected $fillable = [
         'user_id',
         'theme_id',
         'rating',
         'title',
-        'comment'
+        'comment',
     ];
 
     public function resolveRouteBinding($value, $field = null): ?Model
     {
         $decodeId = self::decodeId($value);
 
-        if(!$decodeId) {
+        if (! $decodeId) {
             return null;
         }
 
         return $this->where('id', $decodeId)->firstOrFail();
     }
 
-    public function user(): BelongsTo{
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function theme(): BelongsTo{
+    public function theme(): BelongsTo
+    {
         return $this->belongsTo(Theme::class);
     }
 
-    public function flags(): HasMany{
+    public function flags(): HasMany
+    {
         return $this->hasMany(Flag::class);
     }
 }

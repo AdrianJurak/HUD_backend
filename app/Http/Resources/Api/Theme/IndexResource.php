@@ -13,7 +13,8 @@ class IndexResource extends JsonResource
      */
     public function toArray($request): array
     {
-        $firstImage = !empty($this->images) ? $this->images[0] : null;
+        $firstImage = ! empty($this->images) ? $this->images[0] : null;
+
         return [
             'id' => $this->hash_id,
             'title' => $this->title,
@@ -24,7 +25,7 @@ class IndexResource extends JsonResource
 
             'user' => [
                 'id' => $this->user->hash_id,
-                'name'=> $this->user->name,
+                'name' => $this->user->name,
                 'profile_picture_url' => $this->user->profile_picture_url
                     ? asset('storage/'.$this->user->profile_picture_url)
                     : null,

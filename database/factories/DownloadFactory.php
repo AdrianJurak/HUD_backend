@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Download;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Download>
+ * @extends Factory<Download>
  */
 class DownloadFactory extends Factory
 {
@@ -17,6 +18,7 @@ class DownloadFactory extends Factory
     public function definition(): array
     {
         $createdAt = $this->faker->dateTimeBetween('-1 year', 'now');
+
         return [
             'user_id' => null,
             'theme_id' => null,

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Api\User;
+namespace App\Http\Resources\Api\Category;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class CategoryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,12 +15,8 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->hash_id,
+            'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email,
-            'profile_picture_url' => $this->profile_picture_url
-                ? asset('storage/'.$this->profile_picture_url)
-                : null,
         ];
     }
 }

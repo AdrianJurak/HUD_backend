@@ -24,7 +24,7 @@ class ThemeFavoriteTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()->subSeconds(10)
+            'email_verified_at' => now()->subSeconds(10),
         ]);
 
         $this->theme = Theme::factory()->create([
@@ -38,7 +38,7 @@ class ThemeFavoriteTest extends TestCase
 
     public function test_user_can_favorite_a_theme(): void
     {
-        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/' . $this->theme->hash_id . '/favorite');
+        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/'.$this->theme->hash_id.'/favorite');
 
         $request->assertStatus(201);
 
@@ -54,9 +54,9 @@ class ThemeFavoriteTest extends TestCase
     {
         $this->user->favoriteThemes()->attach($this->theme->id);
 
-        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/' . $this->theme->hash_id . '/favorite');
+        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/'.$this->theme->hash_id.'/favorite');
 
-        $request->assertStatus(201);
+        $request->assertStatus(200);
 
         $request->assertJson(['message' => 'Removed from favorites', 'is_favorite' => false]);
 
@@ -68,7 +68,7 @@ class ThemeFavoriteTest extends TestCase
 
     public function test_guest_cannot_favorite_a_theme(): void
     {
-        $request = $this->postJson('/api/v1/themes/' . $this->theme->hash_id . '/favorite');
+        $request = $this->postJson('/api/v1/themes/'.$this->theme->hash_id.'/favorite');
 
         $request->assertStatus(401);
     }

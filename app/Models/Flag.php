@@ -17,15 +17,15 @@ class Flag extends Model
         'theme_id',
         'review_id',
         'reason',
-        'status'
+        'status',
     ];
 
     public function scopeAlreadyFlagged($query, $userId, $themeId, $reportedUserId, $reviewId): Builder
     {
         return $query->where('user_id', $userId)
-            ->when($themeId, fn($q) => $q->where('theme_id', $themeId))
-            ->when($reportedUserId, fn($q) => $q->where('user_id', $reportedUserId))
-            ->when($reviewId, fn($q) => $q->where('review_id', $reviewId));
+            ->when($themeId, fn ($q) => $q->where('theme_id', $themeId))
+            ->when($reportedUserId, fn ($q) => $q->where('reported_user_id', $reportedUserId))
+            ->when($reviewId, fn ($q) => $q->where('review_id', $reviewId));
     }
 
     public function user(): BelongsTo

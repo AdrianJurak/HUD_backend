@@ -4,7 +4,6 @@ namespace Tests\Feature\Category;
 
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class CategoryTest extends TestCase
@@ -13,8 +12,8 @@ class CategoryTest extends TestCase
 
     public function test_user_can_see_all_categories()
     {
-        $dark = Category::factory()->create(['name' => 'Dark'],);
-        $light = Category::factory()->create(['name' => 'Light'],);
+        $dark = Category::factory()->create(['name' => 'Dark']);
+        $light = Category::factory()->create(['name' => 'Light']);
 
         $response = $this->get('api/v1/categories');
 
@@ -24,13 +23,13 @@ class CategoryTest extends TestCase
             'data' => [
                 [
                     'id' => $dark->id,
-                    'name' => 'Dark'
+                    'name' => 'Dark',
                 ],
                 [
                     'id' => $light->id,
-                    'name' => 'Light'
-                ]
-            ]
+                    'name' => 'Light',
+                ],
+            ],
         ]);
     }
 }

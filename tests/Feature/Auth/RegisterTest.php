@@ -2,22 +2,25 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Mail\VerificationCodeMail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\VerificationCodeMail;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class RegisterTest extends TestCase
 {
     use RefreshDatabase;
-    public function test_user_can_register_with_valid_data() :void{
+
+    public function test_user_can_register_with_valid_data(): void
+    {
         Mail::fake();
         $payload = [
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => 'password',
+            'password_confirmation' => 'password',
         ];
 
         $response = $this->postJson('/api/v1/register', $payload);
@@ -46,7 +49,7 @@ class RegisterTest extends TestCase
     }
 
     #[DataProvider('invalidFieldProvider')]
-    public function test_user_cannot_register_with_invalid_data($payload,$invalidField) :void
+    public function test_user_cannot_register_with_invalid_data($payload, $invalidField): void
     {
         $response = $this->postJson('/api/v1/register', $payload);
 
@@ -54,21 +57,25 @@ class RegisterTest extends TestCase
         $response->assertJsonValidationErrors([$invalidField]);
     }
 
-    public static function invalidFieldProvider() :array
+    public static function invalidFieldProvider(): array
     {
         return [
-          'Missing name' => [
-              ['email' => 'example@user.com', 'password' => 'password'],
-              'name'
-          ],
-          'Missing email' => [
-              ['name' => 'Example User', 'password' => 'password'],
-              'email'
-          ],
-          'Missing password' => [
-              ['name' => 'Example User', 'email' => 'example@user.com'],
-              'password'
-          ]
+            'Missing name' => [
+                ['email' => 'example@user.com', 'password' => 'password', 'password_confirmation' => 'password'],
+                'name',
+            ],
+            'Missing email' => [
+                ['name' => 'Example User', 'password' => 'password', 'password_confirmation' => 'password'],
+                'email',
+            ],
+            'Missing password' => [
+                ['name' => 'Example User', 'email' => 'example@user.com', 'password_confirmation' => 'password'],
+                'password',
+            ],
+            'Missing password confirmation' => [
+                ['name' => 'Example User', 'email' => 'example@user.com', 'password' => 'password'],
+                'password',
+            ],
         ];
     }
 }

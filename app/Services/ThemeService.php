@@ -15,14 +15,14 @@ class ThemeService
         $data = $data ?? [];
 
         $wantsFavorites = filter_var($data['favorites'] ?? false, FILTER_VALIDATE_BOOLEAN);
-        abort_if($wantsFavorites && !auth()->check(), 401, 'Must be logged in');
+        abort_if($wantsFavorites && ! auth()->check(), 401, 'Must be logged in');
 
         return Theme::query()
             ->with('user:id,name,profile_picture_url', 'categories:id,name')
             ->withCount(['reviews', 'downloads', 'favoritedBy'])
             ->search($data['search'] ?? null)
             ->filterByCategories($data['categories'] ?? null)
-            ->when($wantsFavorites, fn($q) => $q->favoritedByUser(auth()->id()))
+            ->when($wantsFavorites, fn ($q) => $q->favoritedByUser(auth()->id()))
             ->applySort($data['sort'] ?? 'recent')
             ->paginate(15);
     }
@@ -31,32 +31,32 @@ class ThemeService
     {
         $uploadedFiles = [];
 
-        try{
-         return DB::transaction(function () use ($data, $user, $images, &$uploadedFiles) {
-             if ($images) {
-                 $paths = $this->uploadImages($images);
+        try {
+            return DB::transaction(function () use ($data, $user, $images, &$uploadedFiles) {
+                if ($images) {
+                    $paths = $this->uploadImages($images);
 
-                 $uploadedFiles = $paths;
-                 $data['images'] = $paths;
-             }
+                    $uploadedFiles = $paths;
+                    $data['images'] = $paths;
+                }
 
-             $theme = $user->themes()->create($data);
+                $theme = $user->themes()->create($data);
 
-             if (isset($data['categories'])) {
-                 $theme->categories()->sync($data['categories']);
-             }
+                if (isset($data['categories'])) {
+                    $theme->categories()->sync($data['categories']);
+                }
 
-             return $theme;
-         });
+                return $theme;
+            });
 
-        }catch(\Throwable $th){
-            if(!empty($uploadedFiles)){
-                foreach($uploadedFiles as $file){
+        } catch (\Throwable $th) {
+            if (! empty($uploadedFiles)) {
+                foreach ($uploadedFiles as $file) {
                     Storage::disk('public')->delete($file);
                 }
             }
 
-            Log::error('Profile update transaction failed: ' . $th->getMessage());
+            Log::error('Theme update transaction failed: '.$th->getMessage());
             abort(500, 'Wystąpił błąd. Spróbuj ponownie.');
         }
     }
@@ -87,7 +87,7 @@ class ThemeService
 
                 $theme->update($data);
             });
-            if (!empty($oldFilesToDelete)) {
+            if (! empty($oldFilesToDelete)) {
                 foreach ($oldFilesToDelete as $oldFile) {
                     Storage::disk('public')->delete($oldFile);
                 }
@@ -96,13 +96,13 @@ class ThemeService
             return $theme->fresh();
 
         } catch (\Throwable $th) {
-            if (!empty($newUploadedFiles)) {
+            if (! empty($newUploadedFiles)) {
                 foreach ($newUploadedFiles as $file) {
                     Storage::disk('public')->delete($file);
                 }
             }
 
-            Log::error('Theme update transaction failed: ' . $th->getMessage());
+            Log::error('Theme update transaction failed: '.$th->getMessage());
             abort(500, 'Wystąpił błąd podczas aktualizacji motywu. Spróbuj ponownie.');
         }
     }
@@ -117,22 +117,24 @@ class ThemeService
     {
         $imagePaths = [];
         foreach ($images as $image) {
-            $imagePaths[] = $image->store('theme_images', 'public');
+            $path = $image->store('theme_images', 'public');
+
+            if ($path === false) {
+                abort(500, 'The image could not be saved.');
+            }
+
+            $imagePaths[] = $path;
         }
+
         return $imagePaths;
     }
 
-    public function deleteImages(?array $images): array
+    public function deleteImages(?array $images): void
     {
-        $imagePaths = [];
-
-        if (!empty($images)) {
+        if (! empty($images)) {
             foreach ($images as $image) {
                 Storage::disk('public')->delete($image);
-                $imagePaths[] = $image;
             }
         }
-
-        return $imagePaths;
     }
 }

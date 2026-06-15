@@ -2,28 +2,26 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class ProfileService
 {
-    public function update(array $validatedData): void
+    public function update(array $validatedData, User $user): void
     {
         $uploadedFile = null;
         $oldPicture = null;
-      
-        $user = auth()->user();
-      
-        if(isset($validatedData['verification_token'], $validatedData['password'])){
-           $this->changePassword($user, $validatedData['verification_token'], $validatedData['password']);
-        }
 
-        try{
-            DB::transaction(function () use ($user,$validatedData, &$uploadedFile, &$oldPicture){
-                
+        try {
+            DB::transaction(function () use ($user, $validatedData, &$uploadedFile, &$oldPicture) {
+
+                if (isset($validatedData['verification_token'], $validatedData['password'])) {
+                    $this->changePassword($user, $validatedData['verification_token'], $validatedData['password']);
+                }
 
                 if (isset($validatedData['name'])) {
                     $user->name = $validatedData['name'];
@@ -43,25 +41,33 @@ class ProfileService
                 $user->save();
             });
 
-            if($oldPicture){
+            if ($oldPicture) {
                 Storage::disk('public')->delete($oldPicture);
             }
 
-        }catch(\Throwable $th){
-            if($uploadedFile){
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Throwable $th) {
+            if ($uploadedFile) {
                 Storage::disk('public')->delete($uploadedFile);
             }
 
-            Log::error('Profile update transaction failed: ' . $th->getMessage());
+            Log::error('Profile update transaction failed: '.$th->getMessage());
             abort(500, 'Wystąpił błąd. Spróbuj ponownie.');
         }
     }
 
     private function changePassword($user, string $token, string $password): void
     {
-        if (!hash_equals((string)$user->verification_token, $token)) {
+        if (! $user->verification_token_expires_at || $user->verification_token_expires_at < now()) {
             throw ValidationException::withMessages([
-                'verification_token' => 'The token is invalid.'
+                'verification_token' => 'The token has expired.',
+            ]);
+        }
+
+        if (! hash_equals((string) $user->verification_token, $token)) {
+            throw ValidationException::withMessages([
+                'verification_token' => 'The token is invalid.',
             ]);
         }
 
@@ -70,11 +76,9 @@ class ProfileService
         $user->verification_token_expires_at = null;
     }
 
-    public function delete(): void
+    public function delete(User $user): void
     {
-        $user = auth()->user();
-
-        if (!empty($user->profile_picture_url)) {
+        if (! empty($user->profile_picture_url)) {
             Storage::disk('public')->delete($user->profile_picture_url);
         }
 

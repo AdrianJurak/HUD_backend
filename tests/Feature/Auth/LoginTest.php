@@ -4,7 +4,6 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -17,7 +16,7 @@ class LoginTest extends TestCase
     {
         $payload = [
             'email' => 'example@user.com',
-            'password' => 'password'
+            'password' => 'password',
         ];
 
         User::factory()->create([
@@ -39,7 +38,7 @@ class LoginTest extends TestCase
     }
 
     #[DataProvider('invalidValidationProvider')]
-    public function test_login_validation_fails($payload,$invalidField): void
+    public function test_login_validation_fails($payload, $invalidField): void
     {
 
         $response = $this->postJson('/api/v1/login', $payload);
@@ -53,12 +52,12 @@ class LoginTest extends TestCase
         return [
             'Missing email' => [
                 ['password' => 'password'],
-                'email'
+                'email',
             ],
             'Missing password' => [
                 ['email' => 'example@user.com'],
-                'password'
-            ]
+                'password',
+            ],
         ];
     }
 
@@ -83,11 +82,11 @@ class LoginTest extends TestCase
     {
         return [
             'Invalid email' => [
-                ['email' => "test@user.com", 'password' => 'password']
+                ['email' => 'test@user.com', 'password' => 'password'],
             ],
             'Invalid password' => [
                 ['email' => 'example@user.com', 'password' => 'pancakes'],
-            ]
+            ],
         ];
     }
 
@@ -95,7 +94,7 @@ class LoginTest extends TestCase
     {
         $payload = [
             'email' => 'example@user.com',
-            'password' => 'password'
+            'password' => 'password',
         ];
 
         User::factory()->create([
@@ -126,5 +125,4 @@ class LoginTest extends TestCase
 
         $this->assertDatabaseCount('personal_access_tokens', 0);
     }
-
 }

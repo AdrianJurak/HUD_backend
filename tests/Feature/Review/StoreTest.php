@@ -7,7 +7,6 @@ use App\Models\Theme;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class StoreTest extends TestCase
@@ -26,7 +25,7 @@ class StoreTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()->subSeconds(10)
+            'email_verified_at' => now()->subSeconds(10),
         ]);
 
         $this->theme = Theme::factory()->create([
@@ -46,7 +45,7 @@ class StoreTest extends TestCase
             'comment' => 'Example Comment',
         ];
 
-        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/' . $this->theme->hash_id . '/reviews', $payload);
+        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/'.$this->theme->hash_id.'/reviews', $payload);
 
         $request->assertStatus(201);
 
@@ -55,7 +54,7 @@ class StoreTest extends TestCase
 
     public function test_guest_cannot_review_a_theme(): void
     {
-        $request = $this->postJson('/api/v1/themes/' . $this->theme->hash_id . '/reviews');
+        $request = $this->postJson('/api/v1/themes/'.$this->theme->hash_id.'/reviews');
         $request->assertStatus(401);
     }
 
@@ -77,7 +76,7 @@ class StoreTest extends TestCase
 
         $this->assertDatabaseHas('reviews', ['title' => $review->title]);
 
-        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/' . $this->theme->hash_id . '/reviews', $payload);
+        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/'.$this->theme->hash_id.'/reviews', $payload);
 
         $request->assertStatus(201);
 
@@ -90,7 +89,7 @@ class StoreTest extends TestCase
     {
         $payload = [];
 
-        $response = $this->actingAs($this->user)->postJson('/api/v1/themes/' . $this->theme->hash_id . '/reviews', $payload);
+        $response = $this->actingAs($this->user)->postJson('/api/v1/themes/'.$this->theme->hash_id.'/reviews', $payload);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['rating']);
