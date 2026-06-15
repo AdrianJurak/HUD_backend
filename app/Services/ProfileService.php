@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -16,10 +16,10 @@ class ProfileService
         $uploadedFile = null;
         $oldPicture = null;
 
-        try{
-            DB::transaction(function () use ($user,$validatedData, &$uploadedFile, &$oldPicture){
+        try {
+            DB::transaction(function () use ($user, $validatedData, &$uploadedFile, &$oldPicture) {
 
-                if(isset($validatedData['verification_token'], $validatedData['password'])){
+                if (isset($validatedData['verification_token'], $validatedData['password'])) {
                     $this->changePassword($user, $validatedData['verification_token'], $validatedData['password']);
                 }
 
@@ -41,16 +41,16 @@ class ProfileService
                 $user->save();
             });
 
-            if($oldPicture){
+            if ($oldPicture) {
                 Storage::disk('public')->delete($oldPicture);
             }
 
-        }catch(\Throwable $th){
-            if($uploadedFile){
+        } catch (\Throwable $th) {
+            if ($uploadedFile) {
                 Storage::disk('public')->delete($uploadedFile);
             }
 
-            Log::error('Profile update transaction failed: ' . $th->getMessage());
+            Log::error('Profile update transaction failed: '.$th->getMessage());
             abort(500, 'Wystąpił błąd. Spróbuj ponownie.');
         }
     }
@@ -59,9 +59,9 @@ class ProfileService
     {
         abort_if($user->verification_token_expires_at < now(), 403, 'Token has expired.');
 
-        if (!hash_equals((string)$user->verification_token, $token)) {
+        if (! hash_equals((string) $user->verification_token, $token)) {
             throw ValidationException::withMessages([
-                'verification_token' => 'The token is invalid.'
+                'verification_token' => 'The token is invalid.',
             ]);
         }
 
@@ -72,7 +72,7 @@ class ProfileService
 
     public function delete(User $user): void
     {
-        if (!empty($user->profile_picture_url)) {
+        if (! empty($user->profile_picture_url)) {
             Storage::disk('public')->delete($user->profile_picture_url);
         }
 

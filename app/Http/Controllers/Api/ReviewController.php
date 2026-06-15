@@ -7,14 +7,13 @@ use App\Http\Requests\Review\StoreRequest;
 use App\Http\Resources\Api\Review\IndexResource;
 use App\Models\Review;
 use App\Models\Theme;
-use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 
 class ReviewController extends Controller
 {
-
     public function index(Theme $theme): AnonymousResourceCollection
     {
         $reviews = $theme->reviews()

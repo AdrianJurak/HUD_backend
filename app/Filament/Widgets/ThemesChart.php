@@ -2,14 +2,14 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Widgets\ChartWidget;
 use App\Models\Theme;
+use Filament\Widgets\ChartWidget;
 
 class ThemesChart extends ChartWidget
 {
     protected static ?string $heading = 'Aktywność tworzenia motywów';
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected static ?string $maxHeight = '250px';
 

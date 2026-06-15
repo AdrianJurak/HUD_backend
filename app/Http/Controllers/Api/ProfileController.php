@@ -9,16 +9,16 @@ use App\Services\ProfileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    public function __construct(private ProfileService $profileService){}
+    public function __construct(private ProfileService $profileService) {}
 
     public function show(Request $request): UserResource
     {
         return new UserResource($request->user());
     }
+
     public function update(UpdateRequest $request): JsonResponse
     {
         $this->profileService->update($request->validated(), auth()->user());

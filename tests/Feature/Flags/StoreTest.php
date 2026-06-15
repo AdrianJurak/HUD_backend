@@ -7,13 +7,11 @@ use App\Models\Review;
 use App\Models\Theme;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class StoreTest extends TestCase
 {
-
     use RefreshDatabase;
 
     protected User $user;
@@ -30,14 +28,14 @@ class StoreTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()->subSeconds(10)
+            'email_verified_at' => now()->subSeconds(10),
         ]);
 
         $this->reportingUser = User::factory()->create([
             'name' => 'Reporting User',
             'email' => 'reporting@user.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()->subSeconds(10)
+            'email_verified_at' => now()->subSeconds(10),
         ]);
 
         $this->theme = Theme::factory()->create([

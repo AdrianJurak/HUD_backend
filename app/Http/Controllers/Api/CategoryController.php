@@ -12,6 +12,6 @@ class CategoryController extends Controller
     {
         $categories = Category::all(['id', 'name']);
 
-        return response()->json(['data'=>$categories]);
+        return response()->json(['data' => $categories]);
     }
 }

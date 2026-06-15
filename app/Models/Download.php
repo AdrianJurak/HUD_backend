@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Download extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'theme_id',
@@ -23,5 +24,4 @@ class Download extends Model
     {
         return $this->belongsTo(Theme::class);
     }
-
 }

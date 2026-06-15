@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 class EmailVerificationController extends Controller
 {
-    public function __construct(private EmailVerificationService $emailVerificationService){}
+    public function __construct(private EmailVerificationService $emailVerificationService) {}
 
     public function verifyEmail(VerifyEmailRequest $request): JsonResponse
     {

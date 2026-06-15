@@ -12,8 +12,9 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         $createdAt = $this->faker->dateTimeBetween('-1 years', 'now');
+
         return [
-            'name'=>$this->faker->randomElement(['dark', 'race','minimalist','airplane mode'])
+            'name' => $this->faker->randomElement(['dark', 'race', 'minimalist', 'airplane mode']),
         ];
     }
 }

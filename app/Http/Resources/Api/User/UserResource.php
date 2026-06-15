@@ -19,8 +19,8 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'profile_picture_url' => $this->profile_picture_url
-                ? asset('storage/' . $this->profile_picture_url)
-                : null
+                ? asset('storage/'.$this->profile_picture_url)
+                : null,
         ];
     }
 }

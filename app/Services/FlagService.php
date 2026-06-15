@@ -2,15 +2,10 @@
 
 namespace App\Services;
 
-use App\Mail\VerificationCodeMail;
 use App\Models\Flag;
 use App\Models\Review;
 use App\Models\Theme;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class FlagService
 {

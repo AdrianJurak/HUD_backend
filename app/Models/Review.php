@@ -11,19 +11,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Review extends Model
 {
     use HasFactory, HasHashids;
+
     protected $fillable = [
         'user_id',
         'theme_id',
         'rating',
         'title',
-        'comment'
+        'comment',
     ];
 
     public function resolveRouteBinding($value, $field = null): ?Model
     {
         $decodeId = self::decodeId($value);
 
-        if(!$decodeId) {
+        if (! $decodeId) {
             return null;
         }
 

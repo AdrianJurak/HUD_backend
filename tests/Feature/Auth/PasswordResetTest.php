@@ -5,7 +5,6 @@ namespace Tests\Feature\Auth;
 use App\Mail\VerificationCodeMail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -51,7 +50,6 @@ class PasswordResetTest extends TestCase
         });
     }
 
-
     public function test_user_cannot_send_reset_password_token_with_invalid_credentials(): void
     {
         User::factory()->create([
@@ -63,7 +61,7 @@ class PasswordResetTest extends TestCase
         ]);
 
         $payload = [
-            'email' => 'test@user.com'
+            'email' => 'test@user.com',
         ];
 
         $response = $this->postJson('/api/v1/generate-password-token', $payload);
@@ -75,7 +73,7 @@ class PasswordResetTest extends TestCase
 
     public function test_reset_password_token_validation(): void
     {
-        $response = $this->postJson('/api/v1/generate-password-token', []); //missing email
+        $response = $this->postJson('/api/v1/generate-password-token', []); // missing email
 
         $response->assertStatus(422);
 
@@ -157,7 +155,7 @@ class PasswordResetTest extends TestCase
     }
 
     #[DataProvider('invalidValidationProvider')]
-    public function test_change_password_validation($payload,$invalidField): void
+    public function test_change_password_validation($payload, $invalidField): void
     {
         $response = $this->postJson('/api/v1/password-change', $payload);
 
@@ -166,20 +164,21 @@ class PasswordResetTest extends TestCase
         $response->assertJsonValidationErrors($invalidField);
     }
 
-    public static function invalidValidationProvider(){
+    public static function invalidValidationProvider()
+    {
         return [
             'Missing email' => [
                 ['verification_token' => '123456', 'password' => 'password'],
-                'email'
+                'email',
             ],
             'Missing token' => [
                 ['email' => 'example@user.com', 'password' => 'password'],
-                'verification_token'
+                'verification_token',
             ],
             'Missing password' => [
-                ['email' => 'example@user.com','verification_token' => '123456'],
-                'password'
-            ]
+                ['email' => 'example@user.com', 'verification_token' => '123456'],
+                'password',
+            ],
         ];
     }
 
@@ -251,5 +250,4 @@ class PasswordResetTest extends TestCase
         $response->assertStatus(400);
         $response->assertJson(['message' => 'Previous verification code is expired.']);
     }
-
 }

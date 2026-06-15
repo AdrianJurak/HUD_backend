@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasHashids;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,19 +19,19 @@ class Theme extends Model
         'title',
         'description',
         'layout_config',
-        'images'
+        'images',
     ];
 
     protected $casts = [
         'layout_config' => 'array',
-        'images' => 'array'
+        'images' => 'array',
     ];
 
     public function resolveRouteBinding($value, $field = null): ?Model
     {
         $decodeId = self::decodeId($value);
 
-        if (!$decodeId) {
+        if (! $decodeId) {
             return null;
         }
 
@@ -40,20 +40,16 @@ class Theme extends Model
 
     public function scopeSearch($query, ?string $search): Builder
     {
-        return $query->when($search, fn($q) =>
-            $q->where(fn($subQuery) =>
-                $subQuery->where('title', 'ilike', '%' . $search . '%')
-                         ->orWhere('description', 'ilike', '%' . $search . '%')
-            )
+        return $query->when($search, fn ($q) => $q->where(fn ($subQuery) => $subQuery->where('title', 'ilike', '%'.$search.'%')
+            ->orWhere('description', 'ilike', '%'.$search.'%')
+        )
         );
     }
 
     public function scopeFavoritedByUser($query, ?int $user_id): Builder
     {
-        return $query->when($user_id, fn($q) =>
-            $q->whereHas('favoritedBy', fn($subQuery) =>
-                $subQuery->where('user_id', $user_id)
-            )
+        return $query->when($user_id, fn ($q) => $q->whereHas('favoritedBy', fn ($subQuery) => $subQuery->where('user_id', $user_id)
+        )
         );
     }
 
@@ -71,10 +67,10 @@ class Theme extends Model
     public function scopeApplySort($query, ?string $sort): Builder
     {
         return match ($sort) {
-          'downloads' => $query->orderByDesc('downloads_count'),
-          'reviews' => $query->orderByDesc('reviews_count'),
-          'likes' =>  $query->orderByDesc('favorited_by_count'),
-          default => $query->latest(),
+            'downloads' => $query->orderByDesc('downloads_count'),
+            'reviews' => $query->orderByDesc('reviews_count'),
+            'likes' => $query->orderByDesc('favorited_by_count'),
+            default => $query->latest(),
         };
     }
 

@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Review;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Review>
+ * @extends Factory<Review>
  */
 class ReviewFactory extends Factory
 {
@@ -17,6 +18,7 @@ class ReviewFactory extends Factory
     public function definition(): array
     {
         $createdAt = $this->faker->dateTimeBetween('-1 year', 'now');
+
         return [
             'user_id' => null,
             'theme_id' => null,

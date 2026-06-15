@@ -5,7 +5,6 @@ namespace Tests\Feature\Theme;
 use App\Models\Theme;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ShowTest extends TestCase
@@ -24,7 +23,7 @@ class ShowTest extends TestCase
             'images' => ['themes/fake_image.png'],
         ]);
 
-        $response = $this->getJson('/api/v1/themes/' . $theme->hash_id);
+        $response = $this->getJson('/api/v1/themes/'.$theme->hash_id);
 
         $response->assertStatus(200);
 
@@ -41,10 +40,10 @@ class ShowTest extends TestCase
                 'user' => [
                     'id',
                     'name',
-                    'profile_picture_url'
+                    'profile_picture_url',
                 ],
-                'categories' => []
-            ]
+                'categories' => [],
+            ],
 
         ]);
 

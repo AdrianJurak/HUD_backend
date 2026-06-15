@@ -6,7 +6,6 @@ use App\Models\Download;
 use App\Models\Theme;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -26,7 +25,7 @@ class DownloadTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()->subSeconds(10)
+            'email_verified_at' => now()->subSeconds(10),
         ]);
 
         $this->theme = Theme::factory()->create([
@@ -40,7 +39,7 @@ class DownloadTest extends TestCase
 
     public function test_user_can_download_a_theme(): void
     {
-        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/' . $this->theme->hash_id . '/download');
+        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/'.$this->theme->hash_id.'/download');
 
         $request->assertStatus(201);
 
@@ -59,7 +58,7 @@ class DownloadTest extends TestCase
             'theme_id' => $this->theme->id,
         ]);
 
-        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/' . $this->theme->hash_id . '/download');
+        $request = $this->actingAs($this->user)->postJson('/api/v1/themes/'.$this->theme->hash_id.'/download');
 
         $request->assertStatus(200);
 
@@ -73,7 +72,7 @@ class DownloadTest extends TestCase
 
     public function test_guest_cannot_download_a_theme(): void
     {
-        $request = $this->postJson('/api/v1/themes/' . $this->theme->hash_id . '/download');
+        $request = $this->postJson('/api/v1/themes/'.$this->theme->hash_id.'/download');
 
         $request->assertStatus(401);
     }

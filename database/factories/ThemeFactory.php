@@ -1,19 +1,22 @@
 <?php
 
 namespace Database\Factories;
+
 use App\Models\Theme;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Theme>
+ * @extends Factory<Theme>
  */
 class ThemeFactory extends Factory
 {
     protected $model = Theme::class;
+
     public function definition(): array
     {
         $createdAt = $this->faker->dateTimeBetween('-1 year', 'now');
+
         return [
             'user_id' => User::factory(),
             'title' => $this->faker->city(),
@@ -26,9 +29,9 @@ class ThemeFactory extends Factory
                         'y' => 100,
                         'size' => 50,
                         'color' => '#32cd32',
-                        'style' => 'digital'
-                    ]
-                ]
+                        'style' => 'digital',
+                    ],
+                ],
             ],
         ];
     }

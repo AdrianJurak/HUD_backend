@@ -24,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'error' => true,
                     'message' => 'Server Error',
-                    'details' => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+                    'details' => config('app.debug') ? $e->getMessage() : 'Internal Server Error',
                 ], 500);
             }
 

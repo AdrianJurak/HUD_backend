@@ -46,18 +46,18 @@ class IndexTest extends TestCase
                     'user' => [
                         'id',
                         'name',
-                        'profile_picture_url'
+                        'profile_picture_url',
                     ],
-                    'categories' => []
-                ]
-            ]
+                    'categories' => [],
+                ],
+            ],
         ]);
 
         $response->assertJsonPath('data.0.user.name', $user->name);
         $response->assertJsonPath('data.0.title', $theme->title);
     }
 
-    public function test_user_can_sort_themes_by_downloads():void
+    public function test_user_can_sort_themes_by_downloads(): void
     {
         $weakTheme = Theme::factory()->create(['title' => 'Weak']);
         $hitTheme = Theme::factory()->create(['title' => 'Hit']);
@@ -76,13 +76,13 @@ class IndexTest extends TestCase
 
         $response->assertStatus(200);
 
-        $response->assertJsonPath('data.0.title','Hit');
-        $response->assertJsonPath('data.1.title','Weak');
+        $response->assertJsonPath('data.0.title', 'Hit');
+        $response->assertJsonPath('data.1.title', 'Weak');
 
-        $response->assertJsonPath('data.0.downloads_count',5);
+        $response->assertJsonPath('data.0.downloads_count', 5);
     }
 
-    public function test_user_can_sort_themes_by_reviews():void
+    public function test_user_can_sort_themes_by_reviews(): void
     {
         $weakTheme = Theme::factory()->create(['title' => 'Weak']);
         $hitTheme = Theme::factory()->create(['title' => 'Hit']);
@@ -99,13 +99,13 @@ class IndexTest extends TestCase
 
         $response->assertStatus(200);
 
-        $response->assertJsonPath('data.0.title','Hit');
-        $response->assertJsonPath('data.1.title','Weak');
+        $response->assertJsonPath('data.0.title', 'Hit');
+        $response->assertJsonPath('data.1.title', 'Weak');
 
-        $response->assertJsonPath('data.0.reviews_count',5);
+        $response->assertJsonPath('data.0.reviews_count', 5);
     }
 
-    public function test_user_can_sort_themes_by_likes():void
+    public function test_user_can_sort_themes_by_likes(): void
     {
         $weakTheme = Theme::factory()->create(['title' => 'Weak']);
         $hitTheme = Theme::factory()->create(['title' => 'Hit']);
@@ -119,13 +119,13 @@ class IndexTest extends TestCase
 
         $response->assertStatus(200);
 
-        $response->assertJsonPath('data.0.title','Hit');
-        $response->assertJsonPath('data.1.title','Weak');
+        $response->assertJsonPath('data.0.title', 'Hit');
+        $response->assertJsonPath('data.1.title', 'Weak');
 
-        $response->assertJsonPath('data.0.likes_count',5);
+        $response->assertJsonPath('data.0.likes_count', 5);
     }
 
-    public function test_user_can_search_themes_by_title():void
+    public function test_user_can_search_themes_by_title(): void
     {
         Theme::factory()->create(['title' => 'Second']);
         Theme::factory()->create(['title' => 'First']);
@@ -136,13 +136,13 @@ class IndexTest extends TestCase
 
         $response->assertJsonCount(1, 'data');
 
-        $response->assertJsonPath('data.0.title','First');
+        $response->assertJsonPath('data.0.title', 'First');
     }
 
-    public function test_user_can_search_themes_by_description():void
+    public function test_user_can_search_themes_by_description(): void
     {
-        Theme::factory()->create(['title'=>'Wrong one','description' => 'Second']);
-        Theme::factory()->create(['title'=>'Correct one','description' => 'First']);
+        Theme::factory()->create(['title' => 'Wrong one', 'description' => 'Second']);
+        Theme::factory()->create(['title' => 'Correct one', 'description' => 'First']);
 
         $response = $this->getJson('/api/v1/themes?search=first');
 
@@ -150,17 +150,17 @@ class IndexTest extends TestCase
 
         $response->assertJsonCount(1, 'data');
 
-        $response->assertJsonPath('data.0.title','Correct one');
+        $response->assertJsonPath('data.0.title', 'Correct one');
     }
 
-    public function test_user_can_search_by_multiple_categories():void
+    public function test_user_can_search_by_multiple_categories(): void
     {
-        $firstTheme = Theme::factory()->create(['title'=>'Dark',]);
-        $secondTheme = Theme::factory()->create(['title'=>'Light',]);
-        Theme::factory()->create(['title'=>'None',]);
+        $firstTheme = Theme::factory()->create(['title' => 'Dark']);
+        $secondTheme = Theme::factory()->create(['title' => 'Light']);
+        Theme::factory()->create(['title' => 'None']);
 
-        $dark = Category::factory()->create(['name'=>'Dark',]);
-        $light = Category::factory()->create(['name'=>'Light',]);
+        $dark = Category::factory()->create(['name' => 'Dark']);
+        $light = Category::factory()->create(['name' => 'Light']);
 
         $firstTheme->categories()->attach($dark);
         $secondTheme->categories()->attach($light);
@@ -171,16 +171,16 @@ class IndexTest extends TestCase
 
         $response->assertJsonCount(2, 'data');
 
-        $response->assertJsonPath('data.0.title','Dark');
+        $response->assertJsonPath('data.0.title', 'Dark');
     }
 
-    public function test_user_can_search_by_one_category():void
+    public function test_user_can_search_by_one_category(): void
     {
-        $firstTheme = Theme::factory()->create(['title'=>'Dark',]);
-        $secondTheme = Theme::factory()->create(['title'=>'Light',]);
+        $firstTheme = Theme::factory()->create(['title' => 'Dark']);
+        $secondTheme = Theme::factory()->create(['title' => 'Light']);
 
-        $dark = Category::factory()->create(['name'=>'Dark',]);
-        $light = Category::factory()->create(['name'=>'Light',]);
+        $dark = Category::factory()->create(['name' => 'Dark']);
+        $light = Category::factory()->create(['name' => 'Light']);
 
         $firstTheme->categories()->attach($dark);
         $secondTheme->categories()->attach($light);
@@ -191,10 +191,10 @@ class IndexTest extends TestCase
 
         $response->assertJsonCount(1, 'data');
 
-        $response->assertJsonPath('data.0.title','Dark');
+        $response->assertJsonPath('data.0.title', 'Dark');
     }
 
-    public function test_user_receives_empty_list_searching_by_non_existing_category():void
+    public function test_user_receives_empty_list_searching_by_non_existing_category(): void
     {
         $response = $this->getJson('/api/v1/themes?categories=Dark');
 
@@ -203,10 +203,10 @@ class IndexTest extends TestCase
         $response->assertJsonCount(0, 'data');
     }
 
-    public function test_user_can_view_favorited_themes_while_logged_in():void
+    public function test_user_can_view_favorited_themes_while_logged_in(): void
     {
-        $theme = Theme::factory()->create(['title'=>'Favorited']);
-        Theme::factory()->create(['title'=>'Not favorited']);
+        $theme = Theme::factory()->create(['title' => 'Favorited']);
+        Theme::factory()->create(['title' => 'Not favorited']);
 
         $user = User::factory()->create();
 
@@ -217,19 +217,19 @@ class IndexTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJsonCount(1, 'data');
-        $response->assertJsonPath('data.0.title','Favorited');
+        $response->assertJsonPath('data.0.title', 'Favorited');
     }
 
-    public function test_user_cannot_search_favorited_themes_while_not_logged_in():void
+    public function test_user_cannot_search_favorited_themes_while_not_logged_in(): void
     {
         $response = $this->getJson('/api/v1/themes?favorites=1');
 
         $response->assertStatus(401);
     }
 
-    public function test_user_cannot_search_themes_by_non_existent_title():void
+    public function test_user_cannot_search_themes_by_non_existent_title(): void
     {
-        Theme::factory()->create(['title'=>'Test']);
+        Theme::factory()->create(['title' => 'Test']);
 
         $response = $this->getJson('/api/v1/themes?search=example');
 
@@ -237,6 +237,4 @@ class IndexTest extends TestCase
 
         $response->assertJsonCount(0, 'data');
     }
-
-
 }

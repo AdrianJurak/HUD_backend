@@ -26,9 +26,9 @@ class IndexResource extends JsonResource
                 'id' => $this->user->hash_id,
                 'name' => $this->user->name,
                 'profile_picture_url' => $this->user->profile_picture_url
-                    ? asset('storage/' . $this->user->profile_picture_url)
+                    ? asset('storage/'.$this->user->profile_picture_url)
                     : null,
-            ]: null,
+            ] : null,
         ];
     }
 }

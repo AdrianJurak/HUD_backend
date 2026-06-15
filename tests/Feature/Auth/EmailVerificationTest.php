@@ -5,7 +5,6 @@ namespace Tests\Feature\Auth;
 use App\Mail\VerificationCodeMail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -14,13 +13,14 @@ use Tests\TestCase;
 class EmailVerificationTest extends TestCase
 {
     use RefreshDatabase;
+
     public function test_user_can_verify_email_with_correct_data(): void
     {
         $user = User::factory()->create([
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'verification_token'=> '123456',
+            'verification_token' => '123456',
             'verification_token_expires_at' => now()->addSeconds(10),
         ]);
 
@@ -33,7 +33,7 @@ class EmailVerificationTest extends TestCase
 
         $response->assertStatus(200);
 
-        $this->assertDatabaseHas('users',[
+        $this->assertDatabaseHas('users', [
             'email' => $user->email,
             'verification_token' => null,
             'verification_token_expires_at' => null,
@@ -45,13 +45,14 @@ class EmailVerificationTest extends TestCase
     }
 
     #[DataProvider('invalidFieldProvider')]
-    public function test_user_can_not_verify_email_with_invalid_credentials($payload, $status): void{
+    public function test_user_can_not_verify_email_with_invalid_credentials($payload, $status): void
+    {
         User::factory()->create([
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'verification_token'=> '123456',
-            'verification_token_expires_at' => now()->addSeconds(30)
+            'verification_token' => '123456',
+            'verification_token_expires_at' => now()->addSeconds(30),
         ]);
 
         $response = $this->postJson('/api/v1/verify', $payload);
@@ -59,22 +60,22 @@ class EmailVerificationTest extends TestCase
         $response->assertStatus($status);
     }
 
-    public static function invalidFieldProvider() :array
+    public static function invalidFieldProvider(): array
     {
         return [
             'Invalid email' => [
-                ['email' => "test@user.com", 'verification_token'=> '123456'],
-                404
+                ['email' => 'test@user.com', 'verification_token' => '123456'],
+                404,
             ],
             'Invalid token' => [
                 ['email' => 'example@user.com', 'verification_token' => '999999'],
-                400
-            ]
+                400,
+            ],
         ];
     }
 
     #[DataProvider('invalidValidationProvider')]
-    public function test_verification_validation_fails($payload,$invalidField): void
+    public function test_verification_validation_fails($payload, $invalidField): void
     {
         $response = $this->postJson('/api/v1/verify', $payload);
 
@@ -83,17 +84,17 @@ class EmailVerificationTest extends TestCase
         $response->assertJsonValidationErrors($invalidField);
     }
 
-    public static function invalidValidationProvider() :array
+    public static function invalidValidationProvider(): array
     {
         return [
             'Missing email' => [
                 ['verification_token' => '123456'],
-                'email'
+                'email',
             ],
             'Missing token' => [
                 ['email' => 'example@user.com'],
-                'verification_token'
-            ]
+                'verification_token',
+            ],
         ];
     }
 
@@ -103,9 +104,9 @@ class EmailVerificationTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'verification_token'=> '123456',
+            'verification_token' => '123456',
             'verification_token_expires_at' => now()->addSeconds(30),
-            'email_verified_at' => now()->subSeconds(10)
+            'email_verified_at' => now()->subSeconds(10),
         ]);
 
         $payload = [
@@ -125,7 +126,7 @@ class EmailVerificationTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'verification_token'=> '123456',
+            'verification_token' => '123456',
             'verification_token_expires_at' => now()->subSeconds(10),
         ]);
 
@@ -147,7 +148,7 @@ class EmailVerificationTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'verification_token'=> '123456',
+            'verification_token' => '123456',
             'verification_token_expires_at' => now()->subSeconds(30),
         ]);
 
@@ -179,14 +180,13 @@ class EmailVerificationTest extends TestCase
         $response->assertJsonValidationErrors(['email']);
     }
 
-
     public function test_user_cannot_refresh_verification_token_with_invalid_email(): void
     {
         User::factory()->create([
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'verification_token'=> '123456',
+            'verification_token' => '123456',
             'verification_token_expires_at' => now()->subSeconds(30),
         ]);
 
@@ -206,7 +206,7 @@ class EmailVerificationTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'verification_token'=> '123456',
+            'verification_token' => '123456',
             'verification_token_expires_at' => now()->addMinutes(10),
         ]);
 
@@ -219,6 +219,4 @@ class EmailVerificationTest extends TestCase
         $response->assertStatus(400);
         $response->assertJson(['message' => 'Current code is still valid try again later']);
     }
-
-
 }

@@ -28,14 +28,14 @@ class UpdateTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()->subSeconds(10)
+            'email_verified_at' => now()->subSeconds(10),
         ]);
 
         $this->theme = Theme::factory()->create([
             'title' => 'Example Title',
             'description' => 'Example Description',
             'user_id' => $this->user->id,
-            'layout_config' => ['Type'=>'Speedometer','Size'=>'Small'],
+            'layout_config' => ['Type' => 'Speedometer', 'Size' => 'Small'],
             'images' => ['themes\fake_image.jpg'],
         ]);
     }
@@ -60,11 +60,10 @@ class UpdateTest extends TestCase
         $payload = [
             'title' => 'Test Title',
             'description' => 'Test Description',
-            'layout_config' => ['Type'=>'Digital','Size'=>'Big'],
+            'layout_config' => ['Type' => 'Digital', 'Size' => 'Big'],
             'images' => $files,
-            'categories' => [$light->id]
+            'categories' => [$light->id],
         ];
-
 
         $response = $this->actingAs($this->user)->putJson('/api/v1/themes/'.$this->theme->hash_id, $payload);
 
@@ -109,7 +108,7 @@ class UpdateTest extends TestCase
     {
         $response = $this->putJson('/api/v1/themes/'.$this->theme->hash_id, [
             'title' => 'Sneaky Theme',
-            'layout_config' => ['Type' => 'Basic']
+            'layout_config' => ['Type' => 'Basic'],
         ]);
 
         $response->assertStatus(401);
@@ -121,12 +120,12 @@ class UpdateTest extends TestCase
             'name' => 'Test User',
             'email' => 'Test@user.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()->subSeconds(10)
+            'email_verified_at' => now()->subSeconds(10),
         ]);
 
         $response = $this->actingAs($user2)->putJson('/api/v1/themes/'.$this->theme->hash_id, [
             'title' => 'Sneaky Theme',
-            'layout_config' => ['Type' => 'Basic']
+            'layout_config' => ['Type' => 'Basic'],
         ]);
 
         $response->assertStatus(403);
@@ -141,7 +140,7 @@ class UpdateTest extends TestCase
 
         $payload = [
             'title' => 'Theme with too many images',
-            'layout_config' => ['Type'=>'Speedometer','Size'=>'Small'],
+            'layout_config' => ['Type' => 'Speedometer', 'Size' => 'Small'],
             'images' => $files,
         ];
 
@@ -159,7 +158,7 @@ class UpdateTest extends TestCase
 
         $payload = [
             'title' => 'Theme with too many images',
-            'layout_config' => ['Type'=>'Speedometer','Size'=>'Small'],
+            'layout_config' => ['Type' => 'Speedometer', 'Size' => 'Small'],
             'images' => [$invalidFile],
         ];
 
@@ -174,12 +173,12 @@ class UpdateTest extends TestCase
             'Wrong Format' => [
                 'document.pdf',
                 100,
-                'application/pdf'
+                'application/pdf',
             ],
             'File too big' => [
                 'huge_avatar.jpg',
                 9000,
-                'image/jpeg'
+                'image/jpeg',
             ],
         ];
     }

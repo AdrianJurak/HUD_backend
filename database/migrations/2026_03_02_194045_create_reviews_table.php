@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('theme_id')->constrained('themes')->cascadeOnDelete();
             $table->unsignedTinyInteger('rating')->default(1);
-            $table->string('title',255)->nullable();
+            $table->string('title', 255)->nullable();
             $table->text('comment')->nullable();
             $table->unique(['user_id', 'theme_id']);
             $table->timestamps();

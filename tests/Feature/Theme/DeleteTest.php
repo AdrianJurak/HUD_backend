@@ -28,7 +28,7 @@ class DeleteTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()->subSeconds(10)
+            'email_verified_at' => now()->subSeconds(10),
         ]);
 
         $this->imagePaths = [];
@@ -42,7 +42,7 @@ class DeleteTest extends TestCase
             'title' => 'Example Title',
             'description' => 'Example Description',
             'user_id' => $this->user->id,
-            'layout_config' => ['Type'=>'Speedometer','Size'=>'Small'],
+            'layout_config' => ['Type' => 'Speedometer', 'Size' => 'Small'],
             'images' => $this->imagePaths,
         ]);
 
@@ -52,7 +52,7 @@ class DeleteTest extends TestCase
 
     public function test_owner_user_can_delete_the_theme(): void
     {
-        $response = $this->actingAs($this->user)->deleteJson('/api/v1/themes/' . $this->theme->hash_id);
+        $response = $this->actingAs($this->user)->deleteJson('/api/v1/themes/'.$this->theme->hash_id);
 
         $response->assertStatus(204);
 
@@ -60,7 +60,7 @@ class DeleteTest extends TestCase
 
         $this->assertDatabaseEmpty('category_theme');
 
-        foreach($this->imagePaths as $imagePath) {
+        foreach ($this->imagePaths as $imagePath) {
             Storage::disk('public')->assertMissing($imagePath);
         }
     }
@@ -69,14 +69,14 @@ class DeleteTest extends TestCase
     {
         $nonOwnerUser = User::factory()->create();
 
-        $response = $this->actingAs($nonOwnerUser)->deleteJson('/api/v1/themes/' . $this->theme->hash_id);
+        $response = $this->actingAs($nonOwnerUser)->deleteJson('/api/v1/themes/'.$this->theme->hash_id);
 
         $response->assertStatus(403);
     }
 
     public function test_guest_cannot_delete_the_theme(): void
     {
-        $response = $this->deleteJson('/api/v1/themes/' . $this->theme->hash_id);
+        $response = $this->deleteJson('/api/v1/themes/'.$this->theme->hash_id);
 
         $response->assertStatus(401);
     }

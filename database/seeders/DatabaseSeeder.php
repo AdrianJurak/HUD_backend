@@ -4,11 +4,11 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Review;
-use App\Models\User;
 use App\Models\Theme;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,28 +19,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-//         User::factory(10)->has(Theme::factory()->count(3)->has(Review::factory()->count(3)))->create();
-//
-//         Category::factory(10)->create();
+        //         User::factory(10)->has(Theme::factory()->count(3)->has(Review::factory()->count(3)))->create();
+        //
+        //         Category::factory(10)->create();
 
         User::firstOrCreate(
-            ['email' => 'test@example.com']
-            , [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => Hash::make('password'),
-            'email_verified_at' => now(),
-        ]);
+            ['email' => 'test@example.com'], [
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]);
 
         $admin = User::firstOrCreate(
-            ['email' => 'admin@admin.com']
-            , [
-            'name' => 'Admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('password'),
-            'email_verified_at' => now(),
-            'role' => 'admin',
-        ]);
+            ['email' => 'admin@admin.com'], [
+                'name' => 'Admin',
+                'email' => 'admin@admin.com',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+                'role' => 'admin',
+            ]);
 
         $categories = ['Telemetria', 'Interfejs', 'Nawigacja', 'Multimedia', 'Diagnostyka OBD'];
 
@@ -62,9 +60,9 @@ class DatabaseSeeder extends Seeder
                         'y' => 100,
                         'size' => 50,
                         'color' => '#32cd32',
-                        'style' => 'digital'
-                    ]
-                ]
+                        'style' => 'digital',
+                    ],
+                ],
             ],
             'images' => (['preview1.jpg', 'preview2.jpg']),
         ]);
@@ -81,9 +79,9 @@ class DatabaseSeeder extends Seeder
                         'y' => 100,
                         'size' => 50,
                         'color' => '#32cd32',
-                        'style' => 'digital'
-                    ]
-                ]
+                        'style' => 'digital',
+                    ],
+                ],
             ],
             'images' => ([]),
         ]);

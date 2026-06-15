@@ -15,9 +15,10 @@ class CheckBan
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(auth()->check() && auth()->user()->isBanned) {
+        if (auth()->check() && auth()->user()->isBanned) {
             abort(Response::HTTP_FORBIDDEN);
         }
+
         return $next($request);
     }
 }

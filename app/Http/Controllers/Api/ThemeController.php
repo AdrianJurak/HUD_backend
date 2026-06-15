@@ -12,14 +12,12 @@ use App\Http\Resources\Api\Theme\ShowResource;
 use App\Models\Theme;
 use App\Services\ThemeService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
-
 class ThemeController extends Controller
 {
-    public function __construct(private ThemeService $themeService){}
+    public function __construct(private ThemeService $themeService) {}
 
     public function index(IndexRequest $request): AnonymousResourceCollection
     {
@@ -46,13 +44,13 @@ class ThemeController extends Controller
 
         return response()->json([
             'message' => 'Theme created successfully',
-            'id' => $theme->hash_id
+            'id' => $theme->hash_id,
         ], 201);
     }
 
     public function update(UpdateThemeRequest $request, Theme $theme): Response
     {
-      $this->themeService->updateTheme(
+        $this->themeService->updateTheme(
             $theme,
             $request->validated(),
             $request->file('images')

@@ -15,13 +15,12 @@ class PasswordResetService
     {
         $user = User::where('email', $validatedData['email'])->first();
 
-        abort_if(!$user, 404, 'User not found.');
+        abort_if(! $user, 404, 'User not found.');
         abort_if($user->email_verified_at === null, 400, 'Email is unverified.');
         abort_if($user->verification_token_expires_at > now(), 400, 'Previous token is still valid');
 
-        try{
-            DB::transaction(function () use ($validatedData, &$user) {
-
+        try {
+            DB::transaction(function () use (&$user) {
 
                 $token = User::generateVerificationToken();
 
@@ -32,8 +31,8 @@ class PasswordResetService
 
                 Mail::to($user->email)->send(new VerificationCodeMail($token));
             });
-        }catch(\Throwable $th){
-            Log::error('Password reset transaction failed: ' . $th->getMessage());
+        } catch (\Throwable $th) {
+            Log::error('Password reset transaction failed: '.$th->getMessage());
             abort(500, 'Wystąpił błąd podczas resetu hasła. Spróbuj ponownie.');
         }
     }
@@ -42,9 +41,9 @@ class PasswordResetService
     {
         $user = User::where('email', $validatedData['email'])->first();
 
-        abort_if(!$user, 404, 'User not found.');
-        abort_if(!hash_equals((string)$user->verification_token, (string) $validatedData['verification_token']),400,'Invalid verification code.');
-        abort_if($user->verification_token_expires_at < now() || $user->verification_token_expires_at == null,400,'Previous verification code is expired.');
+        abort_if(! $user, 404, 'User not found.');
+        abort_if(! hash_equals((string) $user->verification_token, (string) $validatedData['verification_token']), 400, 'Invalid verification code.');
+        abort_if($user->verification_token_expires_at < now() || $user->verification_token_expires_at == null, 400, 'Previous verification code is expired.');
 
         $user->update([
             'password' => Hash::make($validatedData['password']),
