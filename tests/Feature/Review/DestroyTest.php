@@ -52,7 +52,7 @@ class DestroyTest extends TestCase
         $request = $this->actingAs($this->user)
             ->deleteJson('/api/v1/themes/'.$this->theme->hash_id.'/reviews/'.$this->review->hash_id);
 
-        $request->assertStatus(200);
+        $request->assertStatus(204);
 
         $this->assertModelMissing($this->review);
     }

@@ -161,7 +161,7 @@ class EmailVerificationTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson(['message' => 'Verification code sent']);
 
-        Mail::assertSent(VerificationCodeMail::class, function ($mail) use ($user) {
+        Mail::assertQueued(VerificationCodeMail::class, function ($mail) use ($user) {
             $isEmailCorrect = $mail->hasTo($user->email);
 
             $freshUser = $user->fresh();

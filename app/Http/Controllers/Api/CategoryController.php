@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\Category\CategoryResource;
 use App\Models\Category;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CategoryController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
         $categories = Category::all(['id', 'name']);
 
-        return response()->json(['data' => $categories]);
+        return CategoryResource::collection($categories);
     }
 }

@@ -56,7 +56,7 @@ class ThemeFavoriteTest extends TestCase
 
         $request = $this->actingAs($this->user)->postJson('/api/v1/themes/'.$this->theme->hash_id.'/favorite');
 
-        $request->assertStatus(201);
+        $request->assertStatus(200);
 
         $request->assertJson(['message' => 'Removed from favorites', 'is_favorite' => false]);
 

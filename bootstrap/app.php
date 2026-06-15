@@ -18,15 +18,5 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (Throwable $e, Request $request) {
-
-            if ($request->is('api/*') || $request->expectsJson()) {
-                return response()->json([
-                    'error' => true,
-                    'message' => 'Server Error',
-                    'details' => config('app.debug') ? $e->getMessage() : 'Internal Server Error',
-                ], 500);
-            }
-
-        });
+        //
     })->create();

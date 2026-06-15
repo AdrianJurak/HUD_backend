@@ -29,7 +29,7 @@ class EmailVerificationService
         return $token;
     }
 
-    public function tokenCreate(array $data): string
+    public function tokenCreate(array $data): void
     {
         $MINUTES_TO_EXPIRE = 10;
 
@@ -39,7 +39,7 @@ class EmailVerificationService
         abort_if($user->verification_token_expires_at > now()->addMinutes($MINUTES_TO_EXPIRE - 1), 400, 'Current code is still valid try again later');
 
         try {
-            return DB::transaction(function () use (&$user, $MINUTES_TO_EXPIRE) {
+            DB::transaction(function () use (&$user, $MINUTES_TO_EXPIRE) {
                 $token = User::generateVerificationToken();
 
                 $user->update([
@@ -48,8 +48,6 @@ class EmailVerificationService
                 ]);
 
                 Mail::to($user->email)->queue(new VerificationCodeMail($token));
-
-                return $token;
             });
         } catch (\Throwable $th) {
             Log::error('Verification transaction failed: '.$th->getMessage());

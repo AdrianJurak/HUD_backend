@@ -30,23 +30,23 @@ return [
 
         'main' => [
             'salt' => env('HASHIDS_SALT', 'default_salt_oos1'),
-            'length' => env('SALT_LENGTH'),
+            'length' => (int) env('SALT_LENGTH'),
             'alphabet' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
         ],
 
         'themes' => [
             'salt' => env('THEMES_SALT'),
-            'length' => env('SALT_LENGTH'),
+            'length' => (int) env('SALT_LENGTH'),
         ],
 
         'reviews' => [
             'salt' => env('REVIEWS_SALT'),
-            'length' => env('SALT_LENGTH'),
+            'length' => (int) env('SALT_LENGTH'),
         ],
 
         'users' => [
             'salt' => env('USER_SALT'),
-            'length' => env('SALT_LENGTH'),
+            'length' => (int) env('SALT_LENGTH'),
         ],
     ],
 

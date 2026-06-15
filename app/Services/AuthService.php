@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Mail;
 
 class AuthService
 {
-    public function register(array $data): User
+    public function register(array $data): UserResource
     {
         $data['password'] = Hash::make($data['password']);
         $data['verification_token'] = $this->createToken();

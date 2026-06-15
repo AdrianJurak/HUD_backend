@@ -9,9 +9,13 @@ use Illuminate\Http\JsonResponse;
 
 class FlagController extends Controller
 {
+    public function __construct(private FlagService $flagService) {}
+
     public function store(StoreRequest $request): JsonResponse
     {
-        FlagService::flag($request->validated());
+        $reporterId = auth()->id();
+
+        $this->flagService->flag($request->validated(), $reporterId);
 
         return response()->json(['message' => 'The report has been submitted.'], 201);
     }

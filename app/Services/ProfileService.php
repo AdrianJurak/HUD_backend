@@ -45,6 +45,8 @@ class ProfileService
                 Storage::disk('public')->delete($oldPicture);
             }
 
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (\Throwable $th) {
             if ($uploadedFile) {
                 Storage::disk('public')->delete($uploadedFile);
@@ -57,7 +59,11 @@ class ProfileService
 
     private function changePassword($user, string $token, string $password): void
     {
-        abort_if($user->verification_token_expires_at < now(), 403, 'Token has expired.');
+        if (! $user->verification_token_expires_at || $user->verification_token_expires_at < now()) {
+            throw ValidationException::withMessages([
+                'verification_token' => 'The token has expired.',
+            ]);
+        }
 
         if (! hash_equals((string) $user->verification_token, $token)) {
             throw ValidationException::withMessages([

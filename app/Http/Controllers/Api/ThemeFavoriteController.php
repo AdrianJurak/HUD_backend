@@ -14,6 +14,6 @@ class ThemeFavoriteController extends Controller
 
         $isFavorite = count($result['attached']) > 0;
 
-        return response()->json(['message' => $isFavorite ? 'Added to favorites' : 'Removed from favorites', 'is_favorite' => $isFavorite], 201);
+        return response()->json(['message' => $isFavorite ? 'Added to favorites' : 'Removed from favorites', 'is_favorite' => $isFavorite], $isFavorite ? 201 : 200);
     }
 }
