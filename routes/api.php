@@ -12,7 +12,7 @@ use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->middleware('isBanned')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
 
     Route::post('verify', [EmailVerificationController::class, 'verifyEmail'])->middleware('throttle:5,1');

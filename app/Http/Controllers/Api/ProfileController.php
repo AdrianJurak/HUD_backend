@@ -21,7 +21,7 @@ class ProfileController extends Controller
     }
     public function update(UpdateRequest $request): JsonResponse
     {
-        $this->profileService->update($request->validated());
+        $this->profileService->update($request->validated(), auth()->user());
 
         return response()->json([
             'message' => 'Profile updated successfully.',
@@ -30,7 +30,7 @@ class ProfileController extends Controller
 
     public function destroy(Request $request): Response
     {
-        $this->profileService->delete();
+        $this->profileService->delete(auth()->user());
 
         return response()->noContent();
     }

@@ -25,7 +25,7 @@ class StoreThemeRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'layout_config' => 'required|array',
+            'layout_config' => 'required|array|max:100',
             'images' => 'nullable|array|max:5',
             'images.*' => 'file|image|mimes:jpeg,png,jpg,gif|max:8192',
             'categories' => 'array',

@@ -24,7 +24,7 @@ class Flag extends Model
     {
         return $query->where('user_id', $userId)
             ->when($themeId, fn($q) => $q->where('theme_id', $themeId))
-            ->when($reportedUserId, fn($q) => $q->where('user_id', $reportedUserId))
+            ->when($reportedUserId, fn($q) => $q->where('reported_user_id', $reportedUserId))
             ->when($reviewId, fn($q) => $q->where('review_id', $reviewId));
     }
 

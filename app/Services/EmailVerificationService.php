@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\DB;
 
 class EmailVerificationService
 {
-    public function verifyEmail(array $data): string
+    public function verifyEmail(array $validatedData): string
     {
-        $user = User::where('email', $data['email'])->first();
+        $user = User::where('email', $validatedData['email'])->first();
 
         abort_if(!$user, 404, 'User not found');
         abort_if($user->email_verified_at != null, 400, 'Email already verified');
-        abort_if($user->verification_token != $data['verification_token'], 400, 'Invalid verification code.');
+        abort_if(!hash_equals((string)$user->verification_token, (string) $validatedData['verification_token']), 400, 'Invalid verification code.');
         abort_if($user->verification_token_expires_at < now(), 400, 'Verification token expired');
 
         $user->email_verified_at = now();
@@ -24,7 +24,7 @@ class EmailVerificationService
         $user->verification_token_expires_at = null;
         $user->save();
 
-        $token = $user->createToken('android-app')->plainTextToken;
+        $token = $user->createToken($user->email)->plainTextToken;
 
         return $token;
     }
@@ -47,7 +47,7 @@ class EmailVerificationService
                     'verification_token_expires_at' => now()->addMinutes($MINUTES_TO_EXPIRE),
                 ]);
 
-                Mail::to($user->email)->send(new VerificationCodeMail($token));
+                Mail::to($user->email)->queue(new VerificationCodeMail($token));
 
                 return $token;
             });

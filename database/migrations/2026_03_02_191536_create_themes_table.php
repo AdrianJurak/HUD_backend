@@ -11,6 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        DB::statement('CREATE EXTENSION IF NOT EXISTS pg_trgm;');
+
+        DB::statement('CREATE INDEX themes_title_trgm_idx ON themes USING GIN (title gin_trgm_ops);');
+
+        DB::statement('CREATE INDEX themes_description_trgm_idx ON themes USING GIN (description gin_trgm_ops);');
+
         Schema::create('themes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
@@ -27,6 +33,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        DB::statement('DROP INDEX IF EXISTS themes_title_trgm_idx');
+        DB::statement('DROP INDEX IF EXISTS themes_description_trgm_idx');
         Schema::dropIfExists('themes');
     }
 };

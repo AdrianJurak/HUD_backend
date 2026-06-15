@@ -6,7 +6,7 @@ use Vinkla\Hashids\Facades\Hashids;
 
 trait HasHashids
 {
-    public function getHashIdAttribute()
+    public function getHashIdAttribute(): string
     {
         return Hashids::connection($this->getTable())->encode($this->id);
     }

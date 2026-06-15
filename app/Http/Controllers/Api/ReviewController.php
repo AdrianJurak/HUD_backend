@@ -7,6 +7,7 @@ use App\Http\Requests\Review\StoreRequest;
 use App\Http\Resources\Api\Review\IndexResource;
 use App\Models\Review;
 use App\Models\Theme;
+use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Gate;
@@ -33,12 +34,12 @@ class ReviewController extends Controller
         return response()->json(['message' => 'Review is saved successfully.'], 201);
     }
 
-    public function destroy(Theme $theme, Review $review): JsonResponse
+    public function destroy(Theme $theme, Review $review): Response
     {
         Gate::authorize('delete', $review);
 
         $review->delete();
 
-        return response()->json(['message' => 'Review removed']);
+        return response()->noContent();
     }
 }

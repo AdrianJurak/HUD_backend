@@ -42,8 +42,8 @@ class Theme extends Model
     {
         return $query->when($search, fn($q) =>
             $q->where(fn($subQuery) =>
-                $subQuery->where('title', 'like', '%' . $search . '%')
-                         ->orWhere('description', 'like', '%' . $search . '%')
+                $subQuery->where('title', 'ilike', '%' . $search . '%')
+                         ->orWhere('description', 'ilike', '%' . $search . '%')
             )
         );
     }

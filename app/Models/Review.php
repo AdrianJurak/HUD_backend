@@ -30,15 +30,18 @@ class Review extends Model
         return $this->where('id', $decodeId)->firstOrFail();
     }
 
-    public function user(): BelongsTo{
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function theme(): BelongsTo{
+    public function theme(): BelongsTo
+    {
         return $this->belongsTo(Theme::class);
     }
 
-    public function flags(): HasMany{
+    public function flags(): HasMany
+    {
         return $this->hasMany(Flag::class);
     }
 }

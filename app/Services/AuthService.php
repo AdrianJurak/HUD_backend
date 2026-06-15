@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\Api\User\UserResource;
 use App\Mail\VerificationCodeMail;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,7 @@ class AuthService
 
                 Mail::to($user->email)->queue(new VerificationCodeMail($data['verification_token']));
 
-                return $user;
+                return new UserResource($user);
             });
         }catch(\Throwable $th){
             Log::error('Registration transaction failed: ' . $th->getMessage());
@@ -47,7 +48,7 @@ class AuthService
         $token = $user->createToken($user->email)->plainTextToken;
 
         return [
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token,
         ];
     }

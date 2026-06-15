@@ -30,31 +30,24 @@ return [
 
         'main' => [
             'salt' => env('HASHIDS_SALT','default_salt_oos1'),
-            'length' => 6,
+            'length' => env('SALT_LENGTH'),
             'alphabet' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
         ],
 
         'themes' => [
-            'salt'=> 'themes_salt_1234',
-            'length' => 6,
+            'salt'=> env('THEMES_SALT'),
+            'length' => env('SALT_LENGTH'),
         ],
 
         'reviews' => [
-            'salt'=> 'reviews_salt_0987',
-            'length' => 6,
+            'salt'=> env('REVIEWS_SALT'),
+            'length' => env('SALT_LENGTH'),
         ],
 
         'users' => [
-            'salt'=> 'user_salt_5212',
-            'length' => 6,
+            'salt'=> env('USER_SALT'),
+            'length' => env('SALT_LENGTH'),
         ],
-
-        'alternative' => [
-            'salt' => 'your-salt-string',
-            'length' => 'your-length-integer',
-            'alphabet' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-        ],
-
     ],
 
 ];
