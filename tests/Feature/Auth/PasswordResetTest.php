@@ -41,7 +41,7 @@ class PasswordResetTest extends TestCase
         $this->assertNotNull($freshUser->verification_token_expires_at);
         $this->assertTrue($freshUser->verification_token_expires_at->isFuture());
 
-        Mail::assertSent(VerificationCodeMail::class, function ($mail) use ($freshUser) {
+        Mail::assertQueued(VerificationCodeMail::class, function ($mail) use ($freshUser) {
             $isEmailCorrect = $mail->hasTo($freshUser->email);
 
             $isCorrectToken = $mail->token === $freshUser->verification_token;

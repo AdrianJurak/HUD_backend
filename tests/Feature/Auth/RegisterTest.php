@@ -20,6 +20,7 @@ class RegisterTest extends TestCase
             'name' => 'Example User',
             'email' => 'example@user.com',
             'password' => 'password',
+            'password_confirmation' => 'password',
         ];
 
         $response = $this->postJson('/api/v1/register', $payload);
@@ -60,15 +61,19 @@ class RegisterTest extends TestCase
     {
         return [
             'Missing name' => [
-                ['email' => 'example@user.com', 'password' => 'password'],
+                ['email' => 'example@user.com', 'password' => 'password', 'password_confirmation' => 'password'],
                 'name',
             ],
             'Missing email' => [
-                ['name' => 'Example User', 'password' => 'password'],
+                ['name' => 'Example User', 'password' => 'password', 'password_confirmation' => 'password'],
                 'email',
             ],
             'Missing password' => [
-                ['name' => 'Example User', 'email' => 'example@user.com'],
+                ['name' => 'Example User', 'email' => 'example@user.com', 'password_confirmation' => 'password'],
+                'password',
+            ],
+            'Missing password confirmation' => [
+                ['name' => 'Example User', 'email' => 'example@user.com', 'password' => 'password'],
                 'password',
             ],
         ];

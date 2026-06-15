@@ -34,7 +34,7 @@ class ThemesChart extends ChartWidget
                     'borderColor' => '#3b82f6',
                 ],
             ],
-            'labels' => ['Pon', 'Wto', 'Śro', 'Czw', 'Pią', 'Sob', 'Dzisiaj'],
+            'labels' => $data->map(fn (TrendValue $value) => $value->date),
         ];
     }
 

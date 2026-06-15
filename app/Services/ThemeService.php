@@ -56,7 +56,7 @@ class ThemeService
                 }
             }
 
-            Log::error('Profile update transaction failed: '.$th->getMessage());
+            Log::error('Theme update transaction failed: '.$th->getMessage());
             abort(500, 'Wystąpił błąd. Spróbuj ponownie.');
         }
     }
@@ -117,23 +117,24 @@ class ThemeService
     {
         $imagePaths = [];
         foreach ($images as $image) {
-            $imagePaths[] = $image->store('theme_images', 'public');
+            $path = $image->store('theme_images', 'public');
+
+            if ($path === false) {
+                abort(500, 'The image could not be saved.');
+            }
+
+            $imagePaths[] = $path;
         }
 
         return $imagePaths;
     }
 
-    public function deleteImages(?array $images): array
+    public function deleteImages(?array $images): void
     {
-        $imagePaths = [];
-
         if (! empty($images)) {
             foreach ($images as $image) {
                 Storage::disk('public')->delete($image);
-                $imagePaths[] = $image;
             }
         }
-
-        return $imagePaths;
     }
 }

@@ -38,21 +38,21 @@ class EmailVerificationService
         abort_if(! $user, 404, 'User not found');
         abort_if($user->verification_token_expires_at > now()->addMinutes($MINUTES_TO_EXPIRE - 1), 400, 'Current code is still valid try again later');
 
-        try {
-            DB::transaction(function () use (&$user, $MINUTES_TO_EXPIRE) {
-                $token = User::generateVerificationToken();
+        $token = User::generateVerificationToken();
 
+        try {
+            DB::transaction(function () use (&$user, $MINUTES_TO_EXPIRE, &$token) {
                 $user->update([
                     'verification_token' => $token,
                     'verification_token_expires_at' => now()->addMinutes($MINUTES_TO_EXPIRE),
                 ]);
-
-                Mail::to($user->email)->queue(new VerificationCodeMail($token));
             });
         } catch (\Throwable $th) {
             Log::error('Verification transaction failed: '.$th->getMessage());
             abort(500, 'Wystąpił błąd podczas rejestracji. Spróbuj ponownie.');
         }
+
+        Mail::to($user->email)->queue(new VerificationCodeMail($token));
 
     }
 }

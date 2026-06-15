@@ -13,7 +13,7 @@ class StatsOverview extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Aktywni kierowcy', User::count())
+            Stat::make('Aktywni kierowcy', User::where('is_banned', false)->count())
                 ->description('Zarejestrowani użytkownicy systemu')
                 ->descriptionIcon('heroicon-m-users')
                 ->color('success'),

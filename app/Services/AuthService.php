@@ -15,22 +15,23 @@ class AuthService
 {
     public function register(array $data): UserResource
     {
+        $user = null;
+
         $data['password'] = Hash::make($data['password']);
         $data['verification_token'] = $this->createToken();
         $data['verification_token_expires_at'] = now()->addMinutes(10);
         try {
-            return DB::transaction(function () use ($data) {
+            DB::transaction(function () use ($data, &$user) {
                 $user = User::create($data);
-
-                Mail::to($user->email)->queue(new VerificationCodeMail($data['verification_token']));
-
-                return new UserResource($user);
             });
         } catch (\Throwable $th) {
             Log::error('Registration transaction failed: '.$th->getMessage());
             abort(500, 'Wystąpił błąd podczas rejestracji. Spróbuj ponownie.');
         }
 
+        Mail::to($user->email)->queue(new VerificationCodeMail($data['verification_token']));
+
+        return new UserResource($user);
     }
 
     public function login(array $data): array

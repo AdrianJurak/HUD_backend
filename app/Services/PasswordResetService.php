@@ -19,22 +19,23 @@ class PasswordResetService
         abort_if($user->email_verified_at === null, 400, 'Email is unverified.');
         abort_if($user->verification_token_expires_at > now(), 400, 'Previous token is still valid');
 
-        try {
-            DB::transaction(function () use (&$user) {
+        $token = User::generateVerificationToken();
 
-                $token = User::generateVerificationToken();
+        try {
+            DB::transaction(function () use (&$user, &$token) {
 
                 $user->update([
                     'verification_token' => $token,
                     'verification_token_expires_at' => now()->addMinutes(10),
                 ]);
 
-                Mail::to($user->email)->send(new VerificationCodeMail($token));
             });
         } catch (\Throwable $th) {
             Log::error('Password reset transaction failed: '.$th->getMessage());
             abort(500, 'Wystąpił błąd podczas resetu hasła. Spróbuj ponownie.');
         }
+
+        Mail::to($user->email)->queue(new VerificationCodeMail($token));
     }
 
     public function passwordChange(array $validatedData): void
