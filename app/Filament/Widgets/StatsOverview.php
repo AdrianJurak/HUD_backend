@@ -13,7 +13,7 @@ class StatsOverview extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Aktywni kierowcy', User::count())
+            Stat::make('Ilość kierowców w bazie', User::count())
                 ->description('Zarejestrowani użytkownicy systemu')
                 ->descriptionIcon('heroicon-m-users')
                 ->color('success'),
@@ -23,7 +23,7 @@ class StatsOverview extends BaseWidget
                 ->descriptionIcon('heroicon-m-cpu-chip')
                 ->color('primary'),
 
-            Stat::make('Moduły telemetrii', Category::count())
+            Stat::make('Ilość kategorii', Category::count())
                 ->description('Obsługiwane kategorie danych')
                 ->descriptionIcon('heroicon-m-rectangle-stack')
                 ->color('warning'),

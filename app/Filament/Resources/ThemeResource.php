@@ -43,48 +43,48 @@ class ThemeResource extends Resource
                 Builder::make('layout_config')
                     ->label('Theme Layout')
                     ->blocks([
-                        Block::make('speedometer')
+                        Block::make('speed_label')
                             ->schema([
-                                TextInput::make('x')->numeric()->default(100)->required(),
-                                TextInput::make('y')->numeric()->default(100)->required(),
-                                TextInput::make('size')->numeric()->default(50)->label('Font size')->required(),
+                                TextInput::make('offsetX')->numeric()->default(0)->required(),
+                                TextInput::make('offsetY')->numeric()->default(0)->required(),
                                 ColorPicker::make('color')->default('#32cd32'),
-                                Select::make('style')->options([
-                                    'digital'=>'Digital',
-                                    'gauge'=>'Gauge',
-                                    'bar'=>'Bar',
-                                ])->default('digital'),
                             ])->icon('heroicon-m-bolt'),
 
-                        Block::make('tachometer')
+                        Block::make('kmh_label')
                             ->schema([
-                                TextInput::make('x')->numeric()->default(150)->required(),
-                                TextInput::make('y')->numeric()->default(150)->required(),
-                                TextInput::make('size')->numeric()->default(50)->label('Font Size')->required(),
+                                TextInput::make('offsetX')->numeric()->default(487)->required(),
+                                TextInput::make('offsetY')->numeric()->default(170)->required(),
                                 ColorPicker::make('color')->default('#32cd32'),
-                                Select::make('style')->options([
-                                    'digital'=>'Digital',
-                                    'gauge'=>'Gauge',
-                                    'bar'=>'Bar',
-                                ])->default('digital'),
-                                TextInput::make('max_rpm')->numeric()->default(7000)->label('Max RPM')->required(),
-                                Checkbox::make('redline')->label('Show redline?')->default(true),
+                            ])->icon('heroicon-m-clock'),
+
+                        Block::make('rpm_label')
+                            ->schema([
+                                TextInput::make('offsetX')->numeric()->default(4)->required(),
+                                TextInput::make('offsetY')->numeric()->default(232)->required(),
+                                ColorPicker::make('color')->default('#32cd32'),
                             ])->icon('heroicon-m-arrow-path'),
 
-                        Block::make('options')
+                        Block::make('rpm_text_label')
                             ->schema([
-                                TextInput::make('x')->numeric()->default(200)->required(),
-                                TextInput::make('y')->numeric()->default(200)->required(),
-                                TextInput::make('size')->numeric()->default(50)->label('Font Size')->required(),
+                                TextInput::make('offsetX')->numeric()->default(488)->required(),
+                                TextInput::make('offsetY')->numeric()->default(283)->required(),
                                 ColorPicker::make('color')->default('#32cd32'),
-                                Select::make('type')
-                                    ->options([
-                                        'clock'=>'Clock',
-                                        'fuel'=>'Fuel',
-                                        'water_temperature'=>'Water Temperature',
-                                        'oil_temperature'=>'Oil Temperature',
-                                    ])->default('water_temperature'),
+                            ])->icon('heroicon-m-clock'),
+
+                        Block::make('oil_temp_label')
+                            ->schema([
+                                TextInput::make('offsetX')->numeric()->default(0)->required(),
+                                TextInput::make('offsetY')->numeric()->default(360)->required(),
+                                ColorPicker::make('color')->default('#32cd32'),
+                            ])->icon('heroicon-m-clock'),
+
+                        Block::make('water_temp_label')
+                            ->schema([
+                                TextInput::make('offsetX')->numeric()->default(313)->required(),
+                                TextInput::make('offsetY')->numeric()->default(360)->required(),
+                                ColorPicker::make('color')->default('#32cd32'),
                             ])->icon('heroicon-m-clock')
+
                     ])->columnSpanFull(),
                 FileUpload::make('images')
                     ->label('Theme Images')
@@ -93,6 +93,11 @@ class ThemeResource extends Resource
                     ->directory('theme_images')
                     ->maxFiles(5)
                     ->reorderable()
+                    ->columnSpanFull(),
+                FileUpload::make('background_images')
+                    ->label("Background image")
+                    ->image()
+                    ->directory('background_image')
                     ->columnSpanFull(),
             ]);
     }
