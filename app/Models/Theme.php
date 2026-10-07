@@ -19,7 +19,8 @@ class Theme extends Model
         'title',
         'description',
         'layout_config',
-        'images'
+        'images',
+        'background_image'
     ];
 
     protected $casts = [
@@ -42,8 +43,8 @@ class Theme extends Model
     {
         return $query->when($search, fn($q) =>
             $q->where(fn($subQuery) =>
-                $subQuery->where('title', 'like', '%' . $search . '%')
-                         ->orWhere('description', 'like', '%' . $search . '%')
+                $subQuery->where('title', 'ilike', '%' . $search . '%')
+                         ->orWhere('description', 'ilike', '%' . $search . '%')
             )
         );
     }
@@ -72,7 +73,7 @@ class Theme extends Model
     {
         return match ($sort) {
           'downloads' => $query->orderByDesc('downloads_count'),
-          'reviews' => $query->orderByDesc('reviews_count'),
+          'reviews' => $query->orderByDesc('review_count'),
           'likes' =>  $query->orderByDesc('favorited_by_count'),
           default => $query->latest(),
         };

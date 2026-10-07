@@ -14,12 +14,15 @@ class IndexResource extends JsonResource
     public function toArray($request): array
     {
         $firstImage = !empty($this->images) ? $this->images[0] : null;
+        $backgroundImage = !empty($this->background_image) ? $this->background_image : null;
         return [
             'id' => $this->hash_id,
             'title' => $this->title,
             'images' => $firstImage ? asset('storage/'.$firstImage) : null,
+            'background_image' => $backgroundImage ? asset('storage/'.$backgroundImage) : null,
             'likes_count' => $this->favorited_by_count,
-            'reviews_count' => $this->reviews_count,
+            'review_count' => $this->review_count,
+            'avg_rating' => $this->avg_rating,
             'downloads_count' => $this->downloads_count,
 
             'user' => [

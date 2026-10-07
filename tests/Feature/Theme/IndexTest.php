@@ -28,6 +28,7 @@ class IndexTest extends TestCase
             'description' => 'Example Description',
             'layout_config' => ['test'],
             'images' => ['themes/fake_image.png'],
+            'background_image' => 'themes/fake_image.png',
         ]);
 
         $response = $this->getJson('/api/v1/themes');
@@ -40,8 +41,10 @@ class IndexTest extends TestCase
                     'id',
                     'title',
                     'images',
+                    'background_image',
                     'likes_count',
-                    'reviews_count',
+                    'review_count',
+                    'avg_rating',
                     'downloads_count',
                     'user' => [
                         'id',
@@ -55,6 +58,14 @@ class IndexTest extends TestCase
 
         $response->assertJsonPath('data.0.user.name', $user->name);
         $response->assertJsonPath('data.0.title', $theme->title);
+
+        $this->assertDatabaseHas('themes', [
+            'background_image' => $theme->background_image
+        ]);
+
+        $this->assertDatabaseHas('themes', [
+            'images->0' => $theme->images
+        ]);
     }
 
     public function test_user_can_sort_themes_by_downloads():void
@@ -102,7 +113,7 @@ class IndexTest extends TestCase
         $response->assertJsonPath('data.0.title','Hit');
         $response->assertJsonPath('data.1.title','Weak');
 
-        $response->assertJsonPath('data.0.reviews_count',5);
+        $response->assertJsonPath('data.0.review_count',5);
     }
 
     public function test_user_can_sort_themes_by_likes():void

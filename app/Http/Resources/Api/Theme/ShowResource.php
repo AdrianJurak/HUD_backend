@@ -13,6 +13,8 @@ class ShowResource extends JsonResource
      */
     public function toArray($request): array
     {
+        $backgroundImage = !empty($this->background_image) ? $this->background_image : null;
+
         return [
             'id' => $this->hash_id,
             'title' => $this->title,
@@ -22,9 +24,11 @@ class ShowResource extends JsonResource
             'images' => collect($this->images)->map(function ($path) {
                 return asset("storage/" . $path);
             })->toArray(),
+            'background_image' => $backgroundImage ? asset("storage/" . $backgroundImage) : null,
 
             'likes_count' => $this->favorited_by_count,
-            'reviews_count' => $this->reviews_count,
+            'review_count' => $this->review_count,
+            'avg_rating' => $this->avg_rating,
             'downloads_count' => $this->downloads_count,
 
             'user' => [

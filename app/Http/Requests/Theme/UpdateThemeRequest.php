@@ -29,6 +29,7 @@ class UpdateThemeRequest extends FormRequest
             'layout_config' => 'sometimes|required|array',
             'images' => 'sometimes|nullable|array|max:5',
             'images.*' => 'sometimes|file|image|mimes:jpeg,png,jpg,gif|max:8192',
+            'background_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:8192',
             'categories' => 'sometimes|array',
         ];
     }

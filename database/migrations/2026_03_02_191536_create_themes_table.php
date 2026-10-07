@@ -18,6 +18,9 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->json('layout_config');
             $table->json('images')->nullable();
+            $table->string("background_image")->nullable();
+            $table->integer("review_count")->default(0);
+            $table->decimal("avg_rating")->default(0);
             $table->timestamps();
         });
     }

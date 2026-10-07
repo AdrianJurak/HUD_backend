@@ -22,6 +22,7 @@ class ShowTest extends TestCase
             'description' => 'Example Description',
             'layout_config' => ['test'],
             'images' => ['themes/fake_image.png'],
+            'background_image' => 'themes/fake_image.png',
         ]);
 
         $response = $this->getJson('/api/v1/themes/' . $theme->hash_id);
@@ -35,8 +36,10 @@ class ShowTest extends TestCase
                 'description',
                 'layout_config',
                 'images',
+                'background_image',
                 'likes_count',
-                'reviews_count',
+                'review_count',
+                'avg_rating',
                 'downloads_count',
                 'user' => [
                     'id',
@@ -49,6 +52,11 @@ class ShowTest extends TestCase
         ]);
 
         $response->assertJsonPath('data.id', $theme->hash_id);
+
+        $this->assertDatabaseHas('themes', [
+            'images->0' => $theme->images,
+            'background_image' => $theme->background_image,
+        ]);
     }
 
     public function test_user_cannot_see_theme_with_incorrect_id(): void

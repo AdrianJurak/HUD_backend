@@ -19,7 +19,7 @@ class ThemeService
 
         return Theme::query()
             ->with('user:id,name,profile_picture_url', 'categories:id,name')
-            ->withCount(['reviews', 'downloads', 'favoritedBy'])
+            ->withCount(['downloads', 'favoritedBy'])
             ->search($data['search'] ?? null)
             ->filterByCategories($data['categories'] ?? null)
             ->when($wantsFavorites, fn($q) => $q->favoritedByUser(auth()->id()))
@@ -27,17 +27,22 @@ class ThemeService
             ->paginate(15);
     }
 
-    public function createTheme(array $data, $user, $images = null): Theme
+    public function createTheme(array $data, $user, $images = null, $backgroundImage = null): Theme
     {
         $uploadedFiles = [];
 
         try{
-         return DB::transaction(function () use ($data, $user, $images, &$uploadedFiles) {
+         return DB::transaction(function () use ($data, $user, $images, &$uploadedFiles, $backgroundImage) {
              if ($images) {
                  $paths = $this->uploadImages($images);
 
                  $uploadedFiles = $paths;
                  $data['images'] = $paths;
+             }
+
+             if($backgroundImage){
+                 $path = $backgroundImage->store('background_images', 'public');
+                 $data['background_image'] = $path;
              }
 
              $theme = $user->themes()->create($data);
@@ -61,13 +66,13 @@ class ThemeService
         }
     }
 
-    public function updateTheme(Theme $theme, array $data, $images = null): Theme
+    public function updateTheme(Theme $theme, array $data, $images = null, $backgroundImage = null): Theme
     {
         $newUploadedFiles = [];
         $oldFilesToDelete = [];
 
         try {
-            DB::transaction(function () use ($theme, $data, $images, &$newUploadedFiles, &$oldFilesToDelete) {
+            DB::transaction(function () use ($theme, $data, $images, $backgroundImage, &$newUploadedFiles, &$oldFilesToDelete) {
 
                 if ($images) {
                     if ($theme->images) {
@@ -77,6 +82,15 @@ class ThemeService
                     $newUploadedFiles = $this->uploadImages($images);
 
                     $data['images'] = $newUploadedFiles;
+                }
+
+                if($backgroundImage){
+                    if($theme->background_image){
+                        Storage::disk("public")->delete($backgroundImage);
+                    }
+
+                    $path = $backgroundImage->store('background_images', 'public');
+                    $data['background_image'] = $path;
                 }
 
                 if (isset($data['categories'])) {

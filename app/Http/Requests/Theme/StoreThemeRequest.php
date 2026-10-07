@@ -28,6 +28,7 @@ class StoreThemeRequest extends FormRequest
             'layout_config' => 'required|array',
             'images' => 'nullable|array|max:5',
             'images.*' => 'file|image|mimes:jpeg,png,jpg,gif|max:8192',
+            'background_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:8192',
             'categories' => 'array',
         ];
     }

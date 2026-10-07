@@ -31,7 +31,7 @@ class ThemeController extends Controller
     public function show(Theme $theme): ShowResource
     {
         $theme->load('user:id,name,profile_picture_url', 'categories:id,name')
-            ->loadCount(['reviews', 'favoritedBy', 'downloads']);
+            ->loadCount(['favoritedBy', 'downloads']);
 
         return new ShowResource($theme);
     }
@@ -41,7 +41,8 @@ class ThemeController extends Controller
         $theme = $this->themeService->createTheme(
             $request->validated(),
             $request->user(),
-            $request->file('images')
+            $request->file('images'),
+            $request->file('background_image')
         );
 
         return response()->json([
@@ -55,7 +56,8 @@ class ThemeController extends Controller
       $this->themeService->updateTheme(
             $theme,
             $request->validated(),
-            $request->file('images')
+            $request->file('images'),
+            $request->file('background_image')
         );
 
         return response()->noContent();

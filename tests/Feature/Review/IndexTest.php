@@ -37,7 +37,7 @@ class IndexTest extends TestCase
             'images' => ['themes\fake_image.jpg'],
         ]);
 
-        Review::factory()->create([
+        $this->review = Review::factory()->create([
             'user_id' => $this->user->id,
             'theme_id' => $this->theme->id,
             'rating' => '4',
@@ -51,6 +51,15 @@ class IndexTest extends TestCase
         $request = $this->getJson('/api/v1/themes/' . $this->theme->hash_id . '/reviews');
 
         $request->assertStatus(200);
+
+        $review = Review::findOrFail($this->review->id);
+
+        $review_count = $review->theme->review_count;
+        $avg_rating = $review->theme->avg_rating;
+
+        $this->assertEquals(1, $review_count);
+        $this->assertEquals(4, $avg_rating);
+
     }
 
     public function test_user_cannot_view_reviews_without_correct_theme_id(): void

@@ -37,6 +37,8 @@ class StoreTest extends TestCase
             return UploadedFile::fake()->image("avatar_{$number}.jpg");
         })->toArray();
 
+        $backgroundImageFile = UploadedFile::fake()->image("background_image.jpg");
+
         $dark = Category::factory()->create([
             'name' => 'dark',
         ]);
@@ -46,6 +48,7 @@ class StoreTest extends TestCase
             'description' => 'Example Description',
             'layout_config' => ['Type'=>'Speedometer','Size'=>'Small'],
             'images' => $files,
+            'background_image' => $backgroundImageFile,
             'categories' => [$dark->id]
         ];
 
@@ -68,7 +71,11 @@ class StoreTest extends TestCase
 
         $images = $theme->images;
 
+        $backgroundImage = $theme->background_image;
+
         $this->assertNotEmpty($images);
+
+        $this->assertNotEmpty($backgroundImage);
 
         $this->assertCount(5, $images);
 
